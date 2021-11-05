@@ -56,7 +56,98 @@ public class Flight {
 	@ManyToMany(targetEntity=Passenger.class)
 //    @Column(name = "passenger_list")  
 	private List<Passenger> passengers;
-	    
-	
 
+    public Flight(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public Date getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(Date departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public Date getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(Date arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public int getSeatsLeft() {
+        return seatsLeft;
+    }
+
+    public void setSeatsLeft(int seatsLeft) {
+        this.seatsLeft = seatsLeft;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Plane getPlane() {
+        return plane;
+    }
+
+    public void setPlane(Plane plane) {
+        this.plane = plane;
+    }
+
+    public List<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(List<Passenger> passengers) {
+        this.passengers = passengers;
+    }
 }
+
+

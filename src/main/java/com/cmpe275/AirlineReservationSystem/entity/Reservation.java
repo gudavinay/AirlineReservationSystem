@@ -45,6 +45,69 @@ public class Reservation {
 	private Passenger passenger;
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
-	
 
+	public Reservation(int id, String reservationNumber, String origin, String destination, int price, Passenger passenger) {
+		this.id = id;
+		this.reservationNumber = reservationNumber;
+		this.origin = origin;
+		this.destination = destination;
+		this.price = price;
+		this.passenger = passenger;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getReservationNumber() {
+		return reservationNumber;
+	}
+
+	public void setReservationNumber(String reservationNumber) {
+		this.reservationNumber = reservationNumber;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public Passenger getPassenger() {
+		return passenger;
+	}
+
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
+
+	public List<Flight> getFlights() {
+		return flights;
+	}
+
+	public void setFlights(List<Flight> flights) {
+		this.flights = flights;
+	}
 }

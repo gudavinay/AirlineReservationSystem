@@ -45,6 +45,77 @@ public class Passenger {
 	private List<Reservation> reservation;
 	@ManyToMany(targetEntity=Flight.class, cascade=CascadeType.ALL)
 	private List<Flight> flight;
-	
 
+	public Passenger(String id, String firstname, String lastname, int age, String gender, String phone) {
+		this.id = id;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.age = age;
+		this.gender = gender;
+		this.phone = phone;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public List<Reservation> getReservation() {
+		return reservation;
+	}
+
+	public void setReservation(List<Reservation> reservation) {
+		this.reservation = reservation;
+	}
+
+	public List<Flight> getFlight() {
+		return flight;
+	}
+
+	public void setFlight(List<Flight> flight) {
+		this.flight = flight;
+	}
 }
