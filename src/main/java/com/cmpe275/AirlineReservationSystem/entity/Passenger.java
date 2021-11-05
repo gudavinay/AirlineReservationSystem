@@ -26,15 +26,13 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "Passenger")
 public class Passenger {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;   // primary key
+	private String id;
     private String firstname;
     private String lastname;
     private int age;  // Full form only (see definition below)
@@ -46,6 +44,7 @@ public class Passenger {
 	@ManyToMany(targetEntity=Flight.class, cascade=CascadeType.ALL)
 	private List<Flight> flight;
 
+	public Passenger(){};
 	public Passenger(String id, String firstname, String lastname, int age, String gender, String phone) {
 		this.id = id;
 		this.firstname = firstname;

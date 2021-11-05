@@ -35,14 +35,6 @@ public class Plane {
     private String manufacturer;
     private int yearOfManufacture;
 
-	public Plane(int id, String model, int capacity, String manufacturer, int yearOfManufacture) {
-		this.id = id;
-		this.model = model;
-		this.capacity = capacity;
-		this.manufacturer = manufacturer;
-		this.yearOfManufacture = yearOfManufacture;
-	}
-
 	public int getId() {
 		return id;
 	}
