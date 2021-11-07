@@ -31,4 +31,12 @@ public class PassengerController {
                 lastname, age, gender, phone);
     }
 
+    @RequestMapping(value="/passenger/{id}", method=RequestMethod.DELETE, produces={"application/json", "application/xml"})
+    public ResponseEntity<?> deletePassenger(
+            @PathVariable String id,
+            @RequestParam(value="xml", required = false)       String xml
+    ) {
+        return service.deletePassenger(id);
+    }
+
 }

@@ -35,7 +35,6 @@ public class Reservation {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
 	private String reservationNumber; // primary key
     private String origin;
     private String destination;  
@@ -46,21 +45,16 @@ public class Reservation {
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
 
+	public Reservation(){
+
+	}
+
 	public Reservation(int id, String reservationNumber, String origin, String destination, int price, Passenger passenger) {
-		this.id = id;
 		this.reservationNumber = reservationNumber;
 		this.origin = origin;
 		this.destination = destination;
 		this.price = price;
 		this.passenger = passenger;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getReservationNumber() {
