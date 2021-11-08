@@ -4,7 +4,7 @@ import com.cmpe275.AirlineReservationSystem.entity.Flight;
 import com.cmpe275.AirlineReservationSystem.entity.Passenger;
 import com.cmpe275.AirlineReservationSystem.entity.Reservation;
 import com.cmpe275.AirlineReservationSystem.repository.PassengerRepository;
-import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
+//import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +20,8 @@ public class PassengerService {
     @Autowired
     private PassengerRepository passengerRepository;
 
-    @Autowired
-    private ReservationRepository reservationRepository;
-
-    public Passenger createPassenger(Passenger passenger){
-        return passengerRepository.save(passenger);
-    }
+    //@Autowired
+    // private ReservationRepository reservationRepository;
 
     public ResponseEntity<?> updatePassenger(String id,
                                           String firstname,
@@ -56,7 +52,7 @@ public class PassengerService {
                 flight.getPassengers().remove(passenger);
             }
             passenger.getReservation().remove(reservation);
-            reservationRepository.delete(reservation);
+            //reservationRepository.delete(reservation);
         }
         catch(Exception e){
             System.out.println("Exception");
@@ -75,10 +71,10 @@ public class PassengerService {
     public ResponseEntity<?> deletePassenger(String id){
          Optional<Passenger> existingPass=passengerRepository.findById(id);
         if(existingPass.isPresent()){
-            List<Reservation> reservations = reservationRepository.findByPassengerID(existingPass.get());
+            /*List<Reservation> reservations = reservationRepository.findByPassengerID(existingPass.get());
             for(Reservation reservation : reservations){
                 deleteReservation(reservation, existingPass.get());
-            }
+            }*/
             passengerRepository.deleteById(id);
             return new ResponseEntity<>("Passenger with id"+ id+ " is deleted successfully ", HttpStatus.OK);
         }else{

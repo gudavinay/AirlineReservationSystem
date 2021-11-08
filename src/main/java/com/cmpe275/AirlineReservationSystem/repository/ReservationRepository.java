@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.*;
 
 public interface ReservationRepository  extends JpaRepository<Reservation, String> {
-    List<Reservation> findByPassengerID(Passenger passenger);
+    //List<Reservation> findByPassengerID(Passenger passenger);
 }

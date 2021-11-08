@@ -45,10 +45,6 @@ public class Reservation {
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
 
-	public Reservation(){
-
-	}
-
 	public Reservation(int id, String reservationNumber, String origin, String destination, int price, Passenger passenger) {
 		this.reservationNumber = reservationNumber;
 		this.origin = origin;
