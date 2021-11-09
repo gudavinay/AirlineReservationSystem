@@ -26,14 +26,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Plane")
 public class Plane {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String model;
-    private int capacity;
-    private String manufacturer;
-    private int yearOfManufacture;
+	private int capacity;
+	private String manufacturer;
+	private int yearOfManufacture;
+
+	public Plane(int capacity, String model, String manufacturer, int yearOfManufacture) {
+		this.capacity = capacity;
+		this.model = model;
+		this.manufacturer = manufacturer;
+		this.yearOfManufacture = yearOfManufacture;
+	}
 
 	public int getId() {
 		return id;

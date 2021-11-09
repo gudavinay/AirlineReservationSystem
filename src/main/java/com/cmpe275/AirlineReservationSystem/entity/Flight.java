@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "Flight")

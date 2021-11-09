@@ -3,18 +3,14 @@
  */
 package com.cmpe275.AirlineReservationSystem.controller;
 
-import java.util.List;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import com.cmpe275.AirlineReservationSystem.entity.Flight;
-import com.cmpe275.AirlineReservationSystem.repository.FlightRepository;
 import com.cmpe275.AirlineReservationSystem.service.FlightService;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author vinayguda
@@ -26,25 +22,38 @@ public class FlightController {
 	@Autowired
 	private FlightService flightService;
 
-	@PostMapping("/addFlight")
-	public Flight addFlight(@RequestBody Flight flight) {
-		return flightService.saveFlight(flight);
+	@RequestMapping(value="/flight/{flightNumber}", method=RequestMethod.GET
+			, produces={"application/json", "application/xml"})
+	public ResponseEntity<?> getFlightByNumber(
+			@RequestParam("flightNumber") String flightNumber
+	) {
+		return flightService.getFlightByNumber(flightNumber);
 	}
-	
-	@PostMapping("/addFlights")
-	public List<Flight> addFlights(@RequestBody List<Flight> flight) {
-		return flightService.saveFlights(flight);
+
+	@RequestMapping(value="/airline/{flightNumber}", method=RequestMethod.DELETE
+			, produces={"application/json", "application/xml"})
+	public ResponseStatusException deleteFlight(
+			@RequestParam("flightNumber") String flightNumber
+	) {
+		return flightService.deleteFlight(flightNumber);
 	}
-	
-	@GetMapping("/getFlightById/{id}")
-	public Flight getFlight(@PathVariable int id) {
-		return flightService.getFlightById(id);
+
+	@RequestMapping(value="/flight/{flightNumber}", method=RequestMethod.POST
+			, produces={"application/json", "application/xml"})
+	public ResponseEntity<?> updateFlight(
+			@RequestParam("flightNumber") String flightNumber,
+			@RequestParam("price") int price,
+			@RequestParam("origin") String origin,
+			@RequestParam("destination") String destination,
+			@RequestParam("departureTime") Date departureTime,
+			@RequestParam("arrivalTime") Date arrivalTime,
+			@RequestParam("description") String description,
+			@RequestParam("capacity") int capacity,
+			@RequestParam("model") String model,
+			@RequestParam("manufacturer") String manufacturer,
+			@RequestParam("yearOfManufacture") int yearOfManufacture
+	) {
+		return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
+				arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
 	}
-	
-	@GetMapping("/getFlights")
-	public List<Flight> getFlights() {
-		return flightService.getFlights();
-	}
-	
-	
 }
