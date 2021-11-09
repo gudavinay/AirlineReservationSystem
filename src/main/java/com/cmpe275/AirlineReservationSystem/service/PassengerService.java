@@ -30,8 +30,8 @@ public class PassengerService {
 			Passenger res =passengerRepository.save(newPassenger);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 		} else {
-			//throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Another passenger with the same number already exists.");
-			return new ResponseEntity<>("Another passenger with the same number already exists.", HttpStatus.BAD_REQUEST);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Another passenger with the same number already exists.");
+			//return new ResponseEntity<>("Another passenger with the same number already exists.", HttpStatus.BAD_REQUEST);
 		}
 
 	}

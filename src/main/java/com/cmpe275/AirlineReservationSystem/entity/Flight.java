@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,8 +37,8 @@ import lombok.NoArgsConstructor;
 public class Flight {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	@GeneratedValue(generator="system-uuid")
+	@GenericGenerator(name="system-uuid", strategy = "uuid")
     private String flightNumber; // Primary key
     private int price;    // Full form only
     private String origin;
@@ -57,19 +59,23 @@ public class Flight {
 //    @Column(name = "passenger_list")  
 	private List<Passenger> passengers;
 
-    public Flight(int id) {
-        this.id = id;
-    }
 
-    public int getId() {
-        return id;
-    }
+    public Flight(String flightNumber, int price, String origin, String destination, Date departureTime,
+			Date arrivalTime, int seatsLeft, String description, Plane plane, List<Passenger> passengers) {
+		super();
+		this.flightNumber = flightNumber;
+		this.price = price;
+		this.origin = origin;
+		this.destination = destination;
+		this.departureTime = departureTime;
+		this.arrivalTime = arrivalTime;
+		this.seatsLeft = seatsLeft;
+		this.description = description;
+		this.plane = plane;
+		this.passengers = passengers;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getFlightNumber() {
+	public String getFlightNumber() {
         return flightNumber;
     }
 

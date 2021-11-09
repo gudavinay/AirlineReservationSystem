@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +36,8 @@ import lombok.NoArgsConstructor;
 public class Reservation {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(generator="system-uuid")
+	@GenericGenerator(name="system-uuid", strategy = "uuid")
 	private String reservationNumber; // primary key
     private String origin;
     private String destination;  
@@ -45,8 +48,7 @@ public class Reservation {
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
 
-	public Reservation(int id, String reservationNumber, String origin, String destination, int price, Passenger passenger) {
-		this.reservationNumber = reservationNumber;
+	public Reservation( String origin, String destination, int price, Passenger passenger) {	
 		this.origin = origin;
 		this.destination = destination;
 		this.price = price;
