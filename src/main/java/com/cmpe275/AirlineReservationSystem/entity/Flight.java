@@ -33,6 +33,7 @@ import lombok.NoArgsConstructor;
 //@AllArgsConstructor
 @NoArgsConstructor
 @Entity
+// TODO jackson xml root element
 @Table(name = "Flight")
 public class Flight {
 	

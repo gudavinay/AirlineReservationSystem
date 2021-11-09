@@ -90,4 +90,14 @@ public class PassengerService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Passenger Does not exist");
 		}
 	}
+
+	public ResponseEntity<?> getPassenger(String id) {
+		Optional<Passenger> existingPass = passengerRepository.findById(id);
+		if (existingPass.isPresent()) {
+			Passenger passenger = existingPass.get();
+			return new ResponseEntity<>(passenger, HttpStatus.OK);
+		} else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Passenger with id "+id+" does not exist");
+		}
+	}
 }
