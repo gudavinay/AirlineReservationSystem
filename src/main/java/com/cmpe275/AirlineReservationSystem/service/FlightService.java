@@ -3,6 +3,9 @@
  */
 package com.cmpe275.AirlineReservationSystem.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.Optional;
 import com.cmpe275.AirlineReservationSystem.entity.Plane;
 import com.cmpe275.AirlineReservationSystem.entity.Reservation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,11 +48,20 @@ public class FlightService {
 	}
 
 	// Still need to check for overlapping flight times
-	public ResponseEntity<?> updateFlight(String flightNumber, int price, String origin, String destination, Date departureTime
-			, Date arrivalTime, String description, int capacity, String model, String manufacturer, int yearOfManufacture){
+	public ResponseEntity<?> updateFlight(String flightNumber, int price, String origin, String destination, String departureTime
+			, String arrivalTime, String description, int capacity, String model, String manufacturer, int yearOfManufacture){
 		Optional<Flight> res = flightRepository.getByFlightNumber(flightNumber);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
 		Flight flight = null;
 		Plane plane = null;
+		Date dTime=null;
+		Date aTime=null;
+		try{
+			dTime=formatter.parse(departureTime);
+			aTime=formatter.parse(arrivalTime);
+		}catch(ParseException e){
+
+		}
 		if(res.isPresent()) {
 			flight = res.get();
 			List<Reservation> reservationList = flightRepository.getReservationsByFlightNumber(flightNumber);
@@ -63,7 +76,7 @@ public class FlightService {
 			flight.setSeatsLeft(capacity);
 		}else{
 			plane = new Plane(capacity, model, manufacturer, yearOfManufacture);
-			flight = new Flight(flightNumber, price, origin, destination, departureTime, arrivalTime
+			flight = new Flight(flightNumber, price, origin, destination, dTime, aTime
 					, capacity, description, null, new ArrayList<>());
 		}
 		plane = planeRepository.save(plane);

@@ -30,15 +30,13 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
-//@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "Flight")
 public class Flight {
 	
 	@Id
-	@GeneratedValue(generator="system-uuid")
-	@GenericGenerator(name="system-uuid", strategy = "uuid")
+	//@GeneratedValue(generator="system-uuid")
+	//@GenericGenerator(name="system-uuid", strategy = "uuid")
     private String flightNumber; // Primary key
     private int price;    // Full form only
     private String origin;
@@ -59,6 +57,7 @@ public class Flight {
 //    @Column(name = "passenger_list")  
 	private List<Passenger> passengers;
 
+    public Flight(){}
 
     public Flight(String flightNumber, int price, String origin, String destination, Date departureTime,
 			Date arrivalTime, int seatsLeft, String description, Plane plane, List<Passenger> passengers) {
