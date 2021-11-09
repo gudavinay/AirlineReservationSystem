@@ -52,4 +52,16 @@ public class PassengerController {
 		 return res;
 	}
 
+    
+    @RequestMapping(value="/passenger/{id}", method=RequestMethod.GET, produces={"application/json", "application/xml"})
+	public ResponseEntity<?> createPassenger(
+			@RequestParam("id") String id,
+			@RequestParam(value = "xml", required=false) String xml
+			)
+			 {
+		
+		 ResponseEntity<?> res= service.getPassenger(id);		 
+		 return res;
+	}
+
 }

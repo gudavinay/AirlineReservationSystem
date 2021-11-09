@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -43,8 +44,10 @@ public class Reservation {
     private String destination;  
     private int price;
     
-	@OneToOne(targetEntity=Passenger.class, cascade=CascadeType.DETACH)
+	@ManyToOne(targetEntity=Passenger.class, cascade=CascadeType.DETACH)
 	private Passenger passenger;
+	
+	//TODO check if we need to join columns (JOIN: reservation number , INVERSE JOIN: flight number)
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
 
