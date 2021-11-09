@@ -1,5 +1,6 @@
 package com.cmpe275.AirlineReservationSystem.controller;
 
+import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 import com.cmpe275.AirlineReservationSystem.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,24 +45,26 @@ public class PassengerController {
 			@RequestParam("gender") String gender,
 			@RequestParam("phone") String phone,
 			@RequestParam(value = "xml", required=false) String xml
-			)
-			 {
-		
-		 ResponseEntity<?> res= service.createPassenger(firstname, 
-				lastname, age, gender, phone);		 
-		 return res;
+			) {
+		try {
+			return service.createPassenger(firstname, lastname, age, gender, phone);
+		} catch (Exception ex) {
+			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+		}
 	}
 
     
     @RequestMapping(value="/passenger/{id}", method=RequestMethod.GET, produces={"application/json", "application/xml"})
-	public ResponseEntity<?> createPassenger(
+	public ResponseEntity<?> getPassenger(
 			@RequestParam("id") String id,
 			@RequestParam(value = "xml", required=false) String xml
 			)
 			 {
-		
-		 ResponseEntity<?> res= service.getPassenger(id);		 
-		 return res;
+			 try{
+				 return service.getPassenger(id);
+			 }catch(Exception e){
+				return ResponseEntity.badRequest().body(new BadRequest(404,e.getMessage()));
+			 }
 	}
 
 }

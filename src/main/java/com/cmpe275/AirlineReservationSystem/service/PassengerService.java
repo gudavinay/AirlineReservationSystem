@@ -87,7 +87,7 @@ public class PassengerService {
 			passengerRepository.deleteById(id);
 			return new ResponseEntity<>("Passenger with id" + id + " is deleted successfully ", HttpStatus.OK);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Passenger Does not exist");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passenger Does not exist");
 		}
 	}
 
