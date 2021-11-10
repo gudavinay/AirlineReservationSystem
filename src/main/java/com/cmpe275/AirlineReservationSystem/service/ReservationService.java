@@ -156,9 +156,15 @@ public class ReservationService {
     //need to rework
     public ResponseEntity<?> cancelReservation( String reservationNumber) {
     	Reservation res=reservationRepository.findByReservationNumber(reservationNumber);
+    	List<Flight> flightList=res.getFlights();
+    	if(flightList.size()!=0) {
+    		increaseAvailableFlightSeats(flightList);
+    	}
         if(res !=null){
-        	reservationRepository.delete(res);
+        	//not sure about below line will work or not - but we need to remove reservation from passenger
         	res.getPassenger().getReservation().remove(res);
+        	reservationRepository.delete(res);
+        	
             return new ResponseEntity<>(res, HttpStatus.OK);
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with number "+reservationNumber+" does not exist");
