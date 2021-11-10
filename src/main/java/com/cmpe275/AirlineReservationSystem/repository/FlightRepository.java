@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface FlightRepository extends JpaRepository<Flight, Integer> {
 
-	Optional<Flight> getByFlightNumber(String flightNumber);
-	List<Reservation> getReservationsByFlightNumber(String flightNumber);
+
+	Optional<Flight> getFlightByFlightNumber(String flightNumber);
 	void deleteByFlightNumber(String flightNumber);
 }
