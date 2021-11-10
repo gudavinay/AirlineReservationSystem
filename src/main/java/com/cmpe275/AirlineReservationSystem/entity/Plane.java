@@ -21,8 +21,6 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "Plane")
 public class Plane {
