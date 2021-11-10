@@ -46,7 +46,7 @@ public class ReservationService {
     	if(passenger.isPresent() && !CollectionUtils.isEmpty(flightNumbers)) {
     		List<Flight> flightList = getFlightList(flightNumbers);
     		if(flightList.size()>1) {
-    			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation( passengerId,flightList);
+    			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightList);
         		if(isFirstTimeOverlap) {
         	    	System.out.println("Time overlap within same reservation");
         			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is time overlap between the flights within same reservation");
@@ -60,10 +60,20 @@ public class ReservationService {
     		//check for capacity
     		
     		if(isSeatsAvailable(flightList)) {
+    			//calculate fare
     			int fare=calculatePrice(flightList);
+    			
+    			//make new reservation
     			Reservation newReservation= new Reservation( flightList.get(0).getOrigin(), flightList.get(flightList.size()-1).getDestination(), fare, passenger.get(),flightList);
-    			Reservation res =reservationRepository.save(newReservation);
+    			
+    			//add to the passenger
+    			passenger.get().getReservation().add(newReservation);
+    			//add to the passenger to flight
+    			for(Flight flight : flightList){
+    				flight.getPassengers().add(passenger.get());
+    			}
     			reduceAvailableFlightSeats(flightList);
+    			Reservation res =reservationRepository.save(newReservation);
     			return new ResponseEntity<>(res, HttpStatus.OK);
     		}
 	
@@ -75,8 +85,71 @@ public class ReservationService {
    
  
     
-    public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightList  ) {
-		return null;
+    public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightsRemoved) {
+    	Reservation existingReservation= reservationRepository.findByReservationNumber(number);
+    	Passenger passenger= existingReservation.getPassenger();
+    	String passengerId= passenger.getId();
+    	List<Flight> existingFlightList = existingReservation.getFlights();
+    	int existingPrice = existingReservation.getPrice();
+    	if(existingReservation!=null) {
+    		if(!CollectionUtils.isEmpty(flightsAdded)) {
+    			List<Flight> flightListToAdd = getFlightList(flightsAdded);
+    			if(flightListToAdd.size()>1) {
+        			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightListToAdd);
+            		if(isFirstTimeOverlap) {
+            	    	System.out.println("Time overlap within same reservation");
+            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update ! There is time overlap between the flights within same reservation");
+            		}
+            		boolean isSecondTimeOverlap=isTimeOverlapForSamePerson( passengerId,flightListToAdd);
+            		if(isSecondTimeOverlap) {
+            			System.out.println("Time overlap within for same Person");
+            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update! The same person cannot have two reservations that overlap with each other");
+            		}
+        		}
+    			if(isSeatsAvailable(flightListToAdd)) {
+    			int newPrice=existingPrice+calculatePrice(flightListToAdd);
+    			existingFlightList.addAll(flightListToAdd);
+    			existingReservation.setFlights(existingFlightList);
+    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
+    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
+    			existingReservation.setPrice(newPrice);
+    			reduceAvailableFlightSeats(flightListToAdd);
+    			}
+    			
+    		}
+    		if(!CollectionUtils.isEmpty(flightsRemoved)) {
+    			int newRemovalPrice=0;
+    			List<Flight> flightListToRemove = getFlightList(flightsRemoved);
+    			if(existingFlightList.size()!=0) {
+    				existingFlightList.removeAll(flightListToRemove);
+    				increaseAvailableFlightSeats(flightListToRemove);
+//    				for(Flight existingFlight: existingFlightList) {
+//    					for(Flight removeFlight : flightListToRemove) {
+//    						if(existingFlight.getFlightNumber().equals(removeFlight.getFlightNumber())) {
+//    							newRemovalPrice=existingPrice-removeFlight.getPrice();
+//    							existingFlightList.remove(removeFlight);
+//    							flightRepository.deleteByFlightNumber(existingFlight.getFlightNumber());
+//    							
+//    						}
+//    					}
+//    				}
+    				
+    				
+    			}
+    			int newPrice=existingPrice-calculatePrice(flightListToRemove);
+    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
+    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
+    			existingReservation.setPrice(newPrice);
+    				
+    			
+    		}
+    		//passenger.getReservation().add(existingReservation);
+    		Reservation resUpdate =reservationRepository.save(existingReservation);
+    		return new ResponseEntity<>(resUpdate, HttpStatus.OK);
+    		
+    	}
+    	
+    	 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No reservation found for given reservation number");
     	
     }
     
@@ -93,7 +166,7 @@ public class ReservationService {
     	
     }
     
-    private  boolean isTimeOverlapWithinReservation(String passengerId, List<Flight> flightList ) {
+    private  boolean isTimeOverlapWithinReservation( List<Flight> flightList ) {
     	for(int i=0;i <flightList.size(); i++) {
     		for(int j=i+1; j<flightList.size();j++ ) {
     			Date startDate1 = flightList.get(i).getDepartureTime();
@@ -173,4 +246,18 @@ public class ReservationService {
  		}
  		return null;
  	}
+    
+    public Flight increaseAvailableFlightSeats(List<Flight> flightList){
+ 		for(Flight flight : flightList){
+ 			flight.setSeatsLeft(flight.getSeatsLeft()+1);
+ 		}
+ 		return null;
+ 	}
+    
+    public boolean checkFlightSequnce(List<Flight> flightList) {
+    	for(Flight flight : flightList){
+ 			
+ 		}
+    	return false;
+    }
 }

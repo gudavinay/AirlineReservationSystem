@@ -5,6 +5,7 @@ package com.cmpe275.AirlineReservationSystem.entity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -154,6 +155,25 @@ public class Flight {
     public void setPassengers(List<Passenger> passengers) {
         this.passengers = passengers;
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(flightNumber);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Flight other = (Flight) obj;
+		return Objects.equals(flightNumber, other.flightNumber);
+	}
+    
+    
 }
 
 

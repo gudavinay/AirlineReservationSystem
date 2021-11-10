@@ -43,8 +43,8 @@ public class ReservationController {
     @RequestMapping(value="/reservation/{number}", method=RequestMethod.POST, produces={"application/json", "application/xml"})
    	public ResponseEntity<?> updateReservation(
    			@PathVariable String number,
-   			@RequestParam("flightsAdded") List<String> flightsAdded,
-   			@RequestParam("flightsRemoved") List<String> flightsRemoved,
+   			@RequestParam(required=false) List<String> flightsAdded,
+   			@RequestParam(required=false) List<String> flightsRemoved,
    			@RequestParam(value = "xml", required=false) String xml
    			)
    			 {

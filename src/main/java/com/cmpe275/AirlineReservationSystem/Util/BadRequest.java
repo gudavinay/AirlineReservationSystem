@@ -12,6 +12,25 @@ import java.util.Map;
 @Data
 @RequiredArgsConstructor
 public class BadRequest {
-    private final int code;
-    private final String message;
+	private  int code=0;
+    private  String message="";
+	public BadRequest(int code, String message) {
+		super();
+		this.code = code;
+		this.message = message;
+	}
+	public int getCode() {
+		return code;
+	}
+	public void setCode(int code) {
+		this.code = code;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+    
+    
 }

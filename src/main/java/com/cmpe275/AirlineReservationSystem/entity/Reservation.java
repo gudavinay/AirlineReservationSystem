@@ -50,6 +50,9 @@ public class Reservation {
 	//TODO check if we need to join columns (JOIN: reservation number , INVERSE JOIN: flight number)
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
+	public Reservation() {
+	}
+	
 
 	public Reservation( String origin, String destination, int price, Passenger passenger, List<Flight> flights) {	
 		this.origin = origin;
