@@ -8,55 +8,44 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author vinayguda
  *
  */
 
-@Data
 @Entity
-// TODO jackson xml root element
 @Table(name = "Flight")
 public class Flight {
 	
 	@Id
-	//@GeneratedValue(generator="system-uuid")
-	//@GenericGenerator(name="system-uuid", strategy = "uuid")
-    private String flightNumber; // Primary key
-    private int price;    // Full form only
+    private String flightNumber;
+	
+    private int price;
+    
     private String origin;
+    
     private String destination;  
-    /*  Date format: yy-mm-dd-hh, do not include minutes and seconds.
-    ** Example: 2017-03-22-19
-    **The system only needs to support PST. You can ignore other time zones.  
-    */
-    private Date departureTime;     
+
+    private Date departureTime;  
+    
     private Date arrivalTime;
-    private int seatsLeft;    // Full form only
-    private String description;   // Full form only
+    
+    private int seatsLeft;
+    private String description;
 	    
 
 	@OneToOne(targetEntity=Plane.class, cascade=CascadeType.ALL)
 	private Plane plane;
+	
 	@ManyToMany(targetEntity=Passenger.class)
-//    @Column(name = "passenger_list")  
+	@JsonIgnoreProperties({"age", "gender","phone","reservations"})
 	private List<Passenger> passengers;
 
     public Flight(){}

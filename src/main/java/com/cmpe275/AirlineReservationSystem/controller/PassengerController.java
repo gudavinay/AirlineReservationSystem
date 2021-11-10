@@ -23,7 +23,7 @@ public class PassengerController {
             @RequestParam("age")       String age,
             @RequestParam("gender")    String gender,
             @RequestParam("phone")     String phone,
-            @RequestParam(value="xml", required = false)       String xml
+            @RequestParam(value="xml", required = false) String xml
     ) {
         return service.updatePassenger(id, firstname,
                 lastname, age, gender, phone);
