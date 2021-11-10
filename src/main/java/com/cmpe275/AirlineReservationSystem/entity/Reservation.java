@@ -51,11 +51,12 @@ public class Reservation {
 	@ManyToMany(targetEntity=Flight.class)
 	private List<Flight> flights;
 
-	public Reservation( String origin, String destination, int price, Passenger passenger) {	
+	public Reservation( String origin, String destination, int price, Passenger passenger, List<Flight> flights) {	
 		this.origin = origin;
 		this.destination = destination;
 		this.price = price;
 		this.passenger = passenger;
+		this.flights=flights;
 	}
 
 	public String getReservationNumber() {

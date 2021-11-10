@@ -35,6 +35,9 @@ public class Plane {
 	private String manufacturer;
 	private int yearOfManufacture;
 
+	public Plane() {
+		
+	}
 	public Plane(int capacity, String model, String manufacturer, int yearOfManufacture) {
 		this.capacity = capacity;
 		this.model = model;
