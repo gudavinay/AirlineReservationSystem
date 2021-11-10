@@ -66,6 +66,10 @@ public class FlightService {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 						"target capacity less than active reservations");
 			}
+			if(!checkValidUpdate(aTime, dTime)){
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+						"flight timings overlapping with other passenger reservations");
+			}
 			flight.setPrice(price);
 			flight.setOrigin(origin);
 			flight.setDestination(destination);
@@ -77,10 +81,6 @@ public class FlightService {
 			flight.getPlane().setModel(model);
 			flight.getPlane().setManufacturer(manufacturer);
 			flight.getPlane().setYearOfManufacture(yearOfManufacture);
-			if(!checkValidUpdate(flight)){
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-						"flight timings overlapping with other passenger reservations");
-			}
 		}else{
 			plane = new Plane(capacity, model, manufacturer, yearOfManufacture);
 			flight = new Flight(flightNumber, price, origin, destination, dTime, aTime
@@ -90,18 +90,14 @@ public class FlightService {
 		return new ResponseEntity<>(flight, HttpStatus.OK);
 	}
 
-	private boolean checkValidUpdate(Flight currentFlight){
+	private boolean checkValidUpdate(Date currentFlightArrivalTime, Date currentFlightDepartureTime){
 		for(Passenger passenger: passengerRepository.findAll()){
 			for(Reservation reservation: passenger.getReservation()){
 				for(Flight flight: reservation.getFlights()){
-					Date currentFlightDepartureTime = currentFlight.getDepartureTime();
-					Date currentFlightArrivalTime = currentFlight.getArrivalTime();
 					Date flightDepartureTime = flight.getDepartureTime();
 					Date flightArrivalTime = flight.getArrivalTime();
-					if((currentFlightDepartureTime.compareTo(flightDepartureTime) >= 0
-							&& currentFlightDepartureTime.compareTo(flightArrivalTime) <= 0)||
-							(currentFlightArrivalTime.compareTo(flightDepartureTime) >= 0)
-									&& currentFlightArrivalTime.compareTo(flightArrivalTime) <= 0){
+					if(currentFlightArrivalTime.compareTo(flightDepartureTime) <= 0
+							&& currentFlightDepartureTime.compareTo(flightArrivalTime) >= 0) {
 						return false;
 					}
 				}
@@ -110,20 +106,18 @@ public class FlightService {
 		return true;
 	}
 
-	public ResponseStatusException deleteFlight(String flightNumber){
+	public ResponseEntity<?> deleteFlight(String flightNumber){
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
 		if(res.isPresent()){
 			Flight flight = res.get();
-			System.out.println(flight);
 			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
 					new ArrayList<Flight>() {{add(flight);}});
-			System.out.println(reservationList.size());
 			if(!reservationList.isEmpty()){
-				return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Flight with number "
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Flight with number "
 						+ flightNumber +" cannot be deleted");
 			} else {
 				flightRepository.delete(flight);
-				return new ResponseStatusException(HttpStatus.OK, "Flight with number "+ flightNumber
+				throw new ResponseStatusException(HttpStatus.OK, "Flight with number "+ flightNumber
 						+" is deleted successfully");
 			}
 		}else{
@@ -131,5 +125,4 @@ public class FlightService {
 					+flightNumber+" does not exist");
 		}
 	}
-
 }

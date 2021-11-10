@@ -3,16 +3,12 @@
  */
 package com.cmpe275.AirlineReservationSystem.controller;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 
 import com.cmpe275.AirlineReservationSystem.service.FlightService;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author vinayguda
@@ -27,15 +23,28 @@ public class FlightController {
 	@RequestMapping(value="/flight/{flightNumber}", method=RequestMethod.GET
 			, produces={"application/json", "application/xml"})
 	public ResponseEntity<?> getFlightByNumber(
-			@PathVariable String flightNumber) {
-		return flightService.getFlightByNumber(flightNumber);
+			@PathVariable("flightNumber") String flightNumber,
+			@RequestParam(value="xml", required=false) String xml
+	) {
+		try{
+			return flightService.getFlightByNumber(flightNumber);
+		} catch (Exception ex){
+			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+		}
+
 	}
 
 	@RequestMapping(value="/airline/{flightNumber}", method=RequestMethod.DELETE
 			, produces={"application/json", "application/xml"})
-	public ResponseStatusException deleteFlight(
-			@PathVariable String flightNumber) {
-		return flightService.deleteFlight(flightNumber);
+	public ResponseEntity<?> deleteFlight(
+			@PathVariable("flightNumber") String flightNumber,
+			@RequestParam(value="xml", required=false) String xml
+	) {
+		try{
+			return flightService.deleteFlight(flightNumber);
+		} catch (Exception ex) {
+			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+		}
 	}
 
 	@RequestMapping(value="/flight/{flightNumber}", method=RequestMethod.POST
@@ -51,9 +60,14 @@ public class FlightController {
 			@RequestParam("capacity") int capacity,
 			@RequestParam("model") String model,
 			@RequestParam("manufacturer") String manufacturer,
-			@RequestParam("yearOfManufacture") int yearOfManufacture
-	) throws ParseException {
-		return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
-				arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
+			@RequestParam("yearOfManufacture") int yearOfManufacture,
+			@RequestParam(value="xml", required=false) String xml
+	) {
+		try{
+			return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
+					arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
+		} catch (Exception ex){
+			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+		}
 	}
 }
