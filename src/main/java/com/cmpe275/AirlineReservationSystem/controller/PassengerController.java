@@ -56,7 +56,7 @@ public class PassengerController {
     
     @RequestMapping(value="/passenger/{id}", method=RequestMethod.GET, produces={"application/json", "application/xml"})
 	public ResponseEntity<?> getPassenger(
-			@RequestParam("id") String id,
+			@PathVariable("id") String id,
 			@RequestParam(value = "xml", required=false) String xml
 			)
 			 {
