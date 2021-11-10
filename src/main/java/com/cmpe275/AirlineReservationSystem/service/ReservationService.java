@@ -150,7 +150,7 @@ public class ReservationService {
     private List<Flight> getFlightList(List<String> flightNumbers){
     	List<Flight> flightList = new ArrayList<>();
     	for(String flightNumber: flightNumbers ) {
-    		Optional<Flight> flight=flightRepository.getByFlightNumber(flightNumber);
+    		Optional<Flight> flight=flightRepository.getFlightByFlightNumber(flightNumber);
     		if(flight.isPresent()) {
     			flightList.add(flight.get());
     		}

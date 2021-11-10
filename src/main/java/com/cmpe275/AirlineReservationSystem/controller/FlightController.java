@@ -3,6 +3,7 @@
  */
 package com.cmpe275.AirlineReservationSystem.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,14 @@ public class FlightController {
 	@RequestMapping(value="/flight/{flightNumber}", method=RequestMethod.GET
 			, produces={"application/json", "application/xml"})
 	public ResponseEntity<?> getFlightByNumber(
-			@RequestParam("flightNumber") String flightNumber
-	) {
+			@PathVariable String flightNumber) {
 		return flightService.getFlightByNumber(flightNumber);
 	}
 
 	@RequestMapping(value="/airline/{flightNumber}", method=RequestMethod.DELETE
 			, produces={"application/json", "application/xml"})
 	public ResponseStatusException deleteFlight(
-			@RequestParam("flightNumber") String flightNumber
-	) {
+			@PathVariable String flightNumber) {
 		return flightService.deleteFlight(flightNumber);
 	}
 
@@ -53,8 +52,7 @@ public class FlightController {
 			@RequestParam("model") String model,
 			@RequestParam("manufacturer") String manufacturer,
 			@RequestParam("yearOfManufacture") int yearOfManufacture
-	) {
-		System.out.println("came here");
+	) throws ParseException {
 		return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
 				arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
 	}
