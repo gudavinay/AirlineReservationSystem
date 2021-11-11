@@ -4,7 +4,7 @@ import com.cmpe275.AirlineReservationSystem.entity.Flight;
 import com.cmpe275.AirlineReservationSystem.entity.Passenger;
 import com.cmpe275.AirlineReservationSystem.entity.Reservation;
 import com.cmpe275.AirlineReservationSystem.repository.PassengerRepository;
-//import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
+import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PassengerService {
 	@Autowired
 	private PassengerRepository passengerRepository;
 
-	// @Autowired
-	// private ReservationRepository reservationRepository;
+	 @Autowired
+	 private ReservationRepository reservationRepository;
 
 	public ResponseEntity<?> createPassenger(String firstname, String lastname, String age, String gender,
 			String phone) {
@@ -78,12 +78,10 @@ public class PassengerService {
 	public ResponseEntity<?> deletePassenger(String id) {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
-			/*
-			 * List<Reservation> reservations =
-			 * reservationRepository.findByPassengerID(existingPass.get()); for(Reservation
-			 * reservation : reservations){ deleteReservation(reservation,
-			 * existingPass.get()); }
-			 */
+			List<Reservation> reservations = reservationRepository.findByPassenger(existingPass.get());
+			for(Reservation reservation : reservations){
+				deleteReservation(reservation, existingPass.get());
+			}
 			passengerRepository.deleteById(id);
 			return new ResponseEntity<>("Passenger with id" + id + " is deleted successfully ", HttpStatus.OK);
 		} else {
