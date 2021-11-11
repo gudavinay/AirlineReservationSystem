@@ -38,6 +38,7 @@ public class Flight {
     private Date arrivalTime;
     
     private int seatsLeft;
+    
     private String description;
 	    
 
@@ -45,7 +46,7 @@ public class Flight {
 	private Plane plane;
 	
 	@ManyToMany(targetEntity=Passenger.class)
-	@JsonIgnoreProperties({"age", "gender","phone","reservations"})
+	@JsonIgnoreProperties({"age", "gender","phone","reservations","flight"})
 	private List<Passenger> passengers;
 
     public Flight(){}

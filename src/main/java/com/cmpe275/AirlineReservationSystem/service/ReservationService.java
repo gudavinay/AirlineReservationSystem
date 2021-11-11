@@ -67,7 +67,7 @@ public class ReservationService {
     			Reservation newReservation= new Reservation( flightList.get(0).getOrigin(), flightList.get(flightList.size()-1).getDestination(), fare, passenger.get(),flightList);
     			
     			//add to the passenger
-    			passenger.get().getReservation().add(newReservation);
+    			passenger.get().getReservations().add(newReservation);
     			//add to the passenger to flight
     			for(Flight flight : flightList){
     				flight.getPassengers().add(passenger.get());
@@ -75,6 +75,8 @@ public class ReservationService {
     			reduceAvailableFlightSeats(flightList);
     			Reservation res =reservationRepository.save(newReservation);
     			return new ResponseEntity<>(res, HttpStatus.OK);
+    		}else {
+    	    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No seats available. Flight capacity full.");
     		}
 	
     	}
@@ -107,13 +109,15 @@ public class ReservationService {
             		}
         		}
     			if(isSeatsAvailable(flightListToAdd)) {
-    			int newPrice=existingPrice+calculatePrice(flightListToAdd);
-    			existingFlightList.addAll(flightListToAdd);
-    			existingReservation.setFlights(existingFlightList);
-    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
-    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
-    			existingReservation.setPrice(newPrice);
-    			reduceAvailableFlightSeats(flightListToAdd);
+	    			int newPrice=existingPrice+calculatePrice(flightListToAdd);
+	    			existingFlightList.addAll(flightListToAdd);
+	    			existingReservation.setFlights(existingFlightList);
+	    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
+	    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
+	    			existingReservation.setPrice(newPrice);
+	    			reduceAvailableFlightSeats(flightListToAdd);
+    			}else {
+    				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No seats available. Flight capacity full.");
     			}
     			
     		}
@@ -162,7 +166,7 @@ public class ReservationService {
     	}
         if(res !=null){
         	//not sure about below line will work or not - but we need to remove reservation from passenger
-        	res.getPassenger().getReservation().remove(res);
+        	res.getPassenger().getReservations().remove(res);
         	reservationRepository.delete(res);
         	
             return new ResponseEntity<>(res, HttpStatus.OK);
@@ -193,7 +197,7 @@ public class ReservationService {
     private boolean isTimeOverlapForSamePerson(String passengerId, List<Flight> flightList) {
     	//get reservations for passenger
     	Optional<Passenger> passenger = passengerRepository.findById(passengerId);
-    	List<Reservation> reservationList = passenger.get().getReservation();
+    	List<Reservation> reservationList = passenger.get().getReservations();
     	//get flight list from current reservations
     	List<Flight> currentFlightList=new ArrayList<Flight>();
     

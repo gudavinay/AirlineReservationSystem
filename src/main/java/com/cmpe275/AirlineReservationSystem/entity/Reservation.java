@@ -36,7 +36,7 @@ public class Reservation {
     private int price;
     
 	@ManyToOne(targetEntity=Passenger.class, cascade=CascadeType.DETACH)
-	@JsonIgnoreProperties({"age", "gender","phone","reservations"})
+	@JsonIgnoreProperties({"age", "gender","phone","reservations","flight"})
 	private Passenger passenger;
 	
 	@ManyToMany(targetEntity=Flight.class)

@@ -4,6 +4,7 @@
 package com.cmpe275.AirlineReservationSystem.entity;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,11 +37,12 @@ public class Passenger {
     
     private String gender;
 
+    @Column(unique = true)
     private String phone;
 
 	@OneToMany(targetEntity=Reservation.class, cascade=CascadeType.ALL)
 	@JsonIgnoreProperties({"passenger", "price","flights"})
-	private List<Reservation> reservation;
+	private List<Reservation> reservations;
 	
 	@ManyToMany(targetEntity=Flight.class, cascade=CascadeType.ALL)
 	@JsonIgnoreProperties({"price","seatsLeft","description","plane","passengers"})
@@ -49,6 +51,7 @@ public class Passenger {
 	public Passenger(){};
 	
 	public Passenger(String firstname, String lastname, int age, String gender, String phone) {
+		this.firstname = firstname;
 		this.lastname = lastname;
 		this.age = age;
 		this.gender = gender;
@@ -103,12 +106,12 @@ public class Passenger {
 		this.phone = phone;
 	}
 
-	public List<Reservation> getReservation() {
-		return reservation;
+	public List<Reservation> getReservations() {
+		return reservations;
 	}
 
-	public void setReservation(List<Reservation> reservation) {
-		this.reservation = reservation;
+	public void setReservations(List<Reservation> reservations) {
+		this.reservations = reservations;
 	}
 
 	public List<Flight> getFlight() {

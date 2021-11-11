@@ -52,7 +52,7 @@ public class FlightService {
 			, String departureTime, String arrivalTime, String description, int capacity, String model
 			, String manufacturer, int yearOfManufacture) throws ParseException {
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH");
 		Flight flight;
 		Plane plane;
 		Date dTime = formatter.parse(departureTime);
@@ -92,7 +92,7 @@ public class FlightService {
 
 	private boolean checkValidUpdate(Date currentFlightArrivalTime, Date currentFlightDepartureTime){
 		for(Passenger passenger: passengerRepository.findAll()){
-			for(Reservation reservation: passenger.getReservation()){
+			for(Reservation reservation: passenger.getReservations()){
 				for(Flight flight: reservation.getFlights()){
 					Date flightDepartureTime = flight.getDepartureTime();
 					Date flightArrivalTime = flight.getArrivalTime();

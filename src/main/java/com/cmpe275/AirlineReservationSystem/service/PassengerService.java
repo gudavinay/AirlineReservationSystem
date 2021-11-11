@@ -60,7 +60,7 @@ public class PassengerService {
 				updateFlightSeats(flight);
 				flight.getPassengers().remove(passenger);
 			}
-			passenger.getReservation().remove(reservation);
+			passenger.getReservations().remove(reservation);
 			// reservationRepository.delete(reservation);
 		} catch (Exception e) {
 			System.out.println("Exception");
