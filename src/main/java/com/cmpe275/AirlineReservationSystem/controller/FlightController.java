@@ -3,6 +3,7 @@
  */
 package com.cmpe275.AirlineReservationSystem.controller;
 
+import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class FlightController {
 		try{
 			return flightService.getFlightByNumber(flightNumber);
 		} catch (Exception ex){
-			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 
 	}
@@ -43,7 +44,7 @@ public class FlightController {
 		try{
 			return flightService.deleteFlight(flightNumber);
 		} catch (Exception ex) {
-			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 	}
 
@@ -67,7 +68,7 @@ public class FlightController {
 			return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
 					arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
 		} catch (Exception ex){
-			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 	}
 }

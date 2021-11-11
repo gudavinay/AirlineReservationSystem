@@ -2,6 +2,7 @@ package com.cmpe275.AirlineReservationSystem.controller;
 
 
 import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
+import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
 import com.cmpe275.AirlineReservationSystem.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class PassengerController {
 			return service.updatePassenger(id, firstname,
 					lastname, age, gender, phone);
 		}catch (Exception ex){
-			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
     }
 
@@ -45,7 +46,7 @@ public class PassengerController {
 		try{
 			return service.deletePassenger(id);
 		}catch (Exception ex) {
-			return ResponseEntity.badRequest().body(new BadRequest(404, ex.getMessage()));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
 		}
 
     }
@@ -62,7 +63,7 @@ public class PassengerController {
 		try {
 			return service.createPassenger(firstname, lastname, age, gender, phone);
 		} catch (Exception ex) {
-			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 	}
 
@@ -76,7 +77,7 @@ public class PassengerController {
 			 try{
 				 return service.getPassenger(id);
 			 }catch(Exception e){
-				return ResponseEntity.badRequest().body(new BadRequest(404,e.getMessage()));
+				return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404,e.getMessage())));
 			 }
 	}
 
