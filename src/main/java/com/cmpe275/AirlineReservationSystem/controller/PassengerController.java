@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 
 @Transactional
 @RestController
@@ -26,8 +29,12 @@ public class PassengerController {
             @RequestParam("phone")     String phone,
             @RequestParam(value="xml", required = false) String xml
     ) {
-        return service.updatePassenger(id, firstname,
-                lastname, age, gender, phone);
+		try{
+			return service.updatePassenger(id, firstname,
+					lastname, age, gender, phone);
+		}catch (Exception ex){
+			return ResponseEntity.badRequest().body(new BadRequest(400, ex.getMessage()));
+		}
     }
 
     @RequestMapping(value="/passenger/{id}", method=RequestMethod.DELETE, produces={"application/json", "application/xml"})
@@ -35,7 +42,12 @@ public class PassengerController {
             @PathVariable String id,
             @RequestParam(value="xml", required = false)       String xml
     ) {
-        return service.deletePassenger(id);
+		try{
+			return service.deletePassenger(id);
+		}catch (Exception ex) {
+			return ResponseEntity.badRequest().body(new BadRequest(404, ex.getMessage()));
+		}
+
     }
     
     @RequestMapping(value="/passenger", method=RequestMethod.POST, produces={"application/json", "application/xml"})

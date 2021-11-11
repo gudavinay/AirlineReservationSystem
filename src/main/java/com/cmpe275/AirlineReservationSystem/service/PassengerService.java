@@ -40,18 +40,26 @@ public class PassengerService {
 			String phone) {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
-			Passenger passenger = existingPass.get();
-			passenger.setAge(Integer.parseInt(age));
-			passenger.setLastname(lastname);
-			passenger.setFirstname(firstname);
-			passenger.setGender(gender);
-			passenger.setPhone(phone);
-			Passenger res = passengerRepository.save(passenger);
-			return new ResponseEntity<>(res, HttpStatus.OK);
+			try{
+				Passenger isPassengerExists = passengerRepository.findByPhone(phone);
+				if(isPassengerExists==null){
+					Passenger passenger = existingPass.get();
+					passenger.setAge(Integer.parseInt(age));
+					passenger.setLastname(lastname);
+					passenger.setFirstname(firstname);
+					passenger.setGender(gender);
+					passenger.setPhone(phone);
+					Passenger res = passengerRepository.save(passenger);
+					return new ResponseEntity<>(res, HttpStatus.OK);
+				}else{
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passenger with same phone number already exist");
+				}
+			}catch(Exception ex){
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passenger with same phone number already exist");
+			}
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Passenger Does not exist");
 		}
-		// return new ResponseEntity<>(, HttpStatus.OK);
 	}
 
 	public void deleteReservation(Reservation reservation, Passenger passenger) {
@@ -61,7 +69,7 @@ public class PassengerService {
 				flight.getPassengers().remove(passenger);
 			}
 			passenger.getReservations().remove(reservation);
-			// reservationRepository.delete(reservation);
+			reservationRepository.delete(reservation);
 		} catch (Exception e) {
 			System.out.println("Exception");
 		}
@@ -79,7 +87,10 @@ public class PassengerService {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
 			List<Reservation> reservations = reservationRepository.findByPassenger(existingPass.get());
+			System.out.println("Reservation :" + reservations.size());
+
 			for(Reservation reservation : reservations){
+				System.out.println("Reservation :" + reservation.getPassenger());
 				deleteReservation(reservation, existingPass.get());
 			}
 			passengerRepository.deleteById(id);
