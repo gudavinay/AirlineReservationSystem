@@ -3,8 +3,10 @@ package com.cmpe275.AirlineReservationSystem.controller;
 
 import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
+import com.cmpe275.AirlineReservationSystem.Util.Response;
 import com.cmpe275.AirlineReservationSystem.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +46,8 @@ public class PassengerController {
             @RequestParam(value="xml", required = false)       String xml
     ) {
 		try{
-			return service.deletePassenger(id);
+			service.deletePassenger(id);
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Passenger with id" + id + " is deleted successfully "));
 		}catch (Exception ex) {
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
 		}
