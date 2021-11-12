@@ -1,5 +1,7 @@
 package com.cmpe275.AirlineReservationSystem.controller;
 
+import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
+import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
 import com.cmpe275.AirlineReservationSystem.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,13 @@ public class ReservationController {
             @PathVariable String number,
             @RequestParam(value="xml", required = false)       String xml
     ) {
-        return reservationService.getReservation(number);
+    	try {
+    		return reservationService.getReservation(number);
+    	}catch (Exception e) {
+    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
+		}
+         
     }
-    
     
     @RequestMapping(value="/reservation", method=RequestMethod.POST, produces={"application/json", "application/xml"})
  	public ResponseEntity<?> createReservation(
@@ -35,9 +41,12 @@ public class ReservationController {
  			)
  			 {
  		
- 		 ResponseEntity<?> res= reservationService.createReservation(passengerId, 
- 				flightNumbers);		 
- 		 return res;
+    	try {
+			return reservationService.createReservation(passengerId, flightNumbers);	
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
+		}
+ 		
  	}
     
     @RequestMapping(value="/reservation/{number}", method=RequestMethod.POST, produces={"application/json", "application/xml"})
@@ -48,10 +57,11 @@ public class ReservationController {
    			@RequestParam(value = "xml", required=false) String xml
    			)
    			 {
-   		
-   		 ResponseEntity<?> res= reservationService.updateReservation(number, 
-   				flightsAdded,flightsRemoved);		 
-   		 return res;
+    	try {
+    		return reservationService.updateReservation(number, flightsAdded,flightsRemoved);	
+    	}catch (Exception e) {
+    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
+		}
    	}
     
     @RequestMapping(value="/reservation/{number}", method=RequestMethod.DELETE, produces={"application/json", "application/xml"})
@@ -60,8 +70,11 @@ public class ReservationController {
    			@RequestParam(value = "xml", required=false) String xml
    			)
    			 {
-   		
-   		 ResponseEntity<?> res= reservationService.cancelReservation(number);		 
-   		 return res;
+    	try {
+    		return  reservationService.cancelReservation(number);	
+    	}catch (Exception e) {
+    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
+		}
+	
    	}
 }

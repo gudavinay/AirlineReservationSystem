@@ -49,12 +49,12 @@ public class ReservationService {
     			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightList);
         		if(isFirstTimeOverlap) {
         	    	System.out.println("Time overlap within same reservation");
-        			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There is time overlap between the flights within same reservation");
+        			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation,there is time overlap between the flights within same reservation");
         		}
         		boolean isSecondTimeOverlap=isTimeOverlapForSamePerson( passengerId,flightList);
         		if(isSecondTimeOverlap) {
         			System.out.println("Time overlap within for same Person");
-        			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the same person cannot have two reservations that overlap with each other");
+        			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation,the same person cannot have two reservations that overlap with each other");
         		}
     		}
     		//check for capacity
@@ -76,36 +76,47 @@ public class ReservationService {
     			Reservation res =reservationRepository.save(newReservation);
     			return new ResponseEntity<>(res, HttpStatus.OK);
     		}else {
-    	    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No seats available. Flight capacity full.");
+    	    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation, No seats available. Flight capacity full.");
     		}
 	
-    	}
-    	
-    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad Request");
+    	}else  throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation, Passenger or flight Number must be empty.");
 	
     }
    
  
     
     public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightsRemoved) {
-    	Reservation existingReservation= reservationRepository.findByReservationNumber(number);
-    	Passenger passenger= existingReservation.getPassenger();
-    	String passengerId= passenger.getId();
-    	List<Flight> existingFlightList = existingReservation.getFlights();
-    	int existingPrice = existingReservation.getPrice();
+    	Reservation existingReservation= reservationRepository.findByReservationNumber(number); 
     	if(existingReservation!=null) {
+    		Passenger passenger= existingReservation.getPassenger();
+        	String passengerId= passenger.getId();
+        	List<Flight> existingFlightList = existingReservation.getFlights();
+        	int existingPrice = existingReservation.getPrice();
+        	//Removing flights first
+        	if(!CollectionUtils.isEmpty(flightsRemoved)) {
+    			List<Flight> flightListToRemove = getFlightList(flightsRemoved);
+    			if(existingFlightList.size()!=0) {
+    				existingFlightList.removeAll(flightListToRemove);
+    				increaseAvailableFlightSeats(flightListToRemove);	
+    			}
+    			int newPrice=existingPrice-calculatePrice(flightListToRemove);
+    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
+    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
+    			existingReservation.setPrice(newPrice);	
+    		}
+        	////Adding flights later
     		if(!CollectionUtils.isEmpty(flightsAdded)) {
     			List<Flight> flightListToAdd = getFlightList(flightsAdded);
     			if(flightListToAdd.size()>1) {
         			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightListToAdd);
             		if(isFirstTimeOverlap) {
             	    	System.out.println("Time overlap within same reservation");
-            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update ! There is time overlap between the flights within same reservation");
+            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update, there is time overlap between the flights within same reservation");
             		}
             		boolean isSecondTimeOverlap=isTimeOverlapForSamePerson( passengerId,flightListToAdd);
             		if(isSecondTimeOverlap) {
             			System.out.println("Time overlap within for same Person");
-            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update! The same person cannot have two reservations that overlap with each other");
+            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update, the same person cannot have two reservations that overlap with each other");
             		}
         		}
     			if(isSeatsAvailable(flightListToAdd)) {
@@ -121,59 +132,32 @@ public class ReservationService {
     			}
     			
     		}
-    		if(!CollectionUtils.isEmpty(flightsRemoved)) {
-    			int newRemovalPrice=0;
-    			List<Flight> flightListToRemove = getFlightList(flightsRemoved);
-    			if(existingFlightList.size()!=0) {
-    				existingFlightList.removeAll(flightListToRemove);
-    				increaseAvailableFlightSeats(flightListToRemove);
-//    				for(Flight existingFlight: existingFlightList) {
-//    					for(Flight removeFlight : flightListToRemove) {
-//    						if(existingFlight.getFlightNumber().equals(removeFlight.getFlightNumber())) {
-//    							newRemovalPrice=existingPrice-removeFlight.getPrice();
-//    							existingFlightList.remove(removeFlight);
-//    							flightRepository.deleteByFlightNumber(existingFlight.getFlightNumber());
-//    							
-//    						}
-//    					}
-//    				}
-    				
-    				
-    			}
-    			int newPrice=existingPrice-calculatePrice(flightListToRemove);
-    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
-    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
-    			existingReservation.setPrice(newPrice);
-    				
-    			
-    		}
+    		
     		//passenger.getReservation().add(existingReservation);
     		Reservation resUpdate =reservationRepository.save(existingReservation);
     		return new ResponseEntity<>(resUpdate, HttpStatus.OK);
     		
+    	}else {
+    		 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No reservation found for given reservation number");
     	}
-    	
-    	 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No reservation found for given reservation number");
     	
     }
     
     //need to rework
     public ResponseEntity<?> cancelReservation( String reservationNumber) {
     	Reservation res=reservationRepository.findByReservationNumber(reservationNumber);
-    	List<Flight> flightList=res.getFlights();
-    	if(flightList.size()!=0) {
-    		increaseAvailableFlightSeats(flightList);
-    	}
         if(res !=null){
+        	
         	//not sure about below line will work or not - but we need to remove reservation from passenger
         	res.getPassenger().getReservations().remove(res);
         	reservationRepository.delete(res);
-        	
+        	List<Flight> flightList=res.getFlights();
+        	if(flightList.size()!=0) 
+        		increaseAvailableFlightSeats(flightList);
             return new ResponseEntity<>(res, HttpStatus.OK);
-        }else{
+        }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with number "+reservationNumber+" does not exist");
-        }
-    	
+        } 	
     }
     
     private  boolean isTimeOverlapWithinReservation( List<Flight> flightList ) {
@@ -189,7 +173,6 @@ public class ReservationService {
     		}
     		
     	}
-    	
     	return false;
     	
     }
@@ -250,18 +233,17 @@ public class ReservationService {
  	   return price;
     }
     
-    public Flight reduceAvailableFlightSeats(List<Flight> flightList){
+    public void reduceAvailableFlightSeats(List<Flight> flightList){
  		for(Flight flight : flightList){
  			flight.setSeatsLeft(flight.getSeatsLeft()-1);
  		}
- 		return null;
+ 		
  	}
     
-    public Flight increaseAvailableFlightSeats(List<Flight> flightList){
+    public void increaseAvailableFlightSeats(List<Flight> flightList){
  		for(Flight flight : flightList){
  			flight.setSeatsLeft(flight.getSeatsLeft()+1);
  		}
- 		return null;
  	}
     
     public boolean checkFlightSequnce(List<Flight> flightList) {
