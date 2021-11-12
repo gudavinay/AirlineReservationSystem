@@ -5,6 +5,7 @@ import com.cmpe275.AirlineReservationSystem.entity.Passenger;
 import com.cmpe275.AirlineReservationSystem.entity.Reservation;
 import com.cmpe275.AirlineReservationSystem.repository.PassengerRepository;
 import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class PassengerService {
 	}
 
 	public ResponseEntity<?> updatePassenger(String id, String firstname, String lastname, String age, String gender,
-			String phone) {
+			String phone) throws NotFoundException {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
 			try{
@@ -52,13 +53,13 @@ public class PassengerService {
 					Passenger res = passengerRepository.save(passenger);
 					return new ResponseEntity<>(res, HttpStatus.OK);
 				}else{
-					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passenger with same phone number already exist");
+					throw new IllegalArgumentException("Passenger with same phone number already exist");
 				}
 			}catch(Exception ex){
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passenger with same phone number already exist");
+				throw new IllegalArgumentException("Passenger with same phone number already exist");
 			}
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Passenger Does not exist");
+			throw new NotFoundException("Passenger Does not exist");
 		}
 	}
 
@@ -83,7 +84,7 @@ public class PassengerService {
 		}
 	}
 
-	public ResponseEntity<?> deletePassenger(String id) {
+	public ResponseEntity<?> deletePassenger(String id) throws NotFoundException {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
 			List<Reservation> reservations = reservationRepository.findByPassenger(existingPass.get());
@@ -96,7 +97,7 @@ public class PassengerService {
 			passengerRepository.deleteById(id);
 			return new ResponseEntity<>("Passenger with id" + id + " is deleted successfully ", HttpStatus.OK);
 		} else {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passenger Does not exist");
+			throw new NotFoundException("Passenger Does not exist");
 		}
 	}
 

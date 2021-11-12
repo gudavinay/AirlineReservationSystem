@@ -3,6 +3,7 @@ package com.cmpe275.AirlineReservationSystem.controller;
 import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
 import com.cmpe275.AirlineReservationSystem.service.ReservationService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class ReservationController {
     ) {
     	try {
     		return reservationService.getReservation(number);
-    	}catch (Exception e) {
+    	}catch (NotFoundException e) {
     		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, e.getMessage())));
 		}
          

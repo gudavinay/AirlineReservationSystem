@@ -6,6 +6,7 @@ import com.cmpe275.AirlineReservationSystem.entity.Reservation;
 import com.cmpe275.AirlineReservationSystem.repository.FlightRepository;
 import com.cmpe275.AirlineReservationSystem.repository.PassengerRepository;
 import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,13 @@ public class ReservationService {
 	@Autowired
 	private FlightRepository flightRepository;
 
-    public ResponseEntity<?> getReservation(String id){
+    public ResponseEntity<?> getReservation(String id) throws NotFoundException {
         Optional<Reservation> existingRes=reservationRepository.findById(id);
-        if(existingRes.isPresent()){
+		//ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with number "+id+" does not exist");
+		if(existingRes.isPresent()){
             Reservation reservation = existingRes.get();
             return new ResponseEntity<>(reservation, HttpStatus.OK);
-        }else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with number "+id+" does not exist");
-        }
+        }else throw new NotFoundException("Reservation with number " + id + " does not exist");
     }
     
    public ResponseEntity<?> createReservation(String passengerId, List<String> flightNumbers) {

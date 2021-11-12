@@ -5,6 +5,7 @@ import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
 import com.cmpe275.AirlineReservationSystem.Util.Response;
 import com.cmpe275.AirlineReservationSystem.service.PassengerService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,9 @@ public class PassengerController {
 		try{
 			return service.updatePassenger(id, firstname,
 					lastname, age, gender, phone);
-		}catch (Exception ex){
+		}catch (IllegalArgumentException ex){
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
+		}catch (NotFoundException ex){
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
 		}
     }
@@ -48,7 +51,7 @@ public class PassengerController {
 		try{
 			service.deletePassenger(id);
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Passenger with id" + id + " is deleted successfully "));
-		}catch (Exception ex) {
+		}catch (NotFoundException ex) {
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
 		}
 
