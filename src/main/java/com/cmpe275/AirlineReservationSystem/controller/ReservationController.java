@@ -2,8 +2,10 @@ package com.cmpe275.AirlineReservationSystem.controller;
 
 import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
+import com.cmpe275.AirlineReservationSystem.Util.Response;
 import com.cmpe275.AirlineReservationSystem.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,7 +73,8 @@ public class ReservationController {
    			)
    			 {
     	try {
-    		return  reservationService.cancelReservation(number);	
+    		reservationService.cancelReservation(number);
+    		return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Reservation with number " + number + " is deleted successfully "));
     	}catch (Exception e) {
     		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
 		}
