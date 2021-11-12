@@ -12,6 +12,7 @@ import com.cmpe275.AirlineReservationSystem.entity.Plane;
 import com.cmpe275.AirlineReservationSystem.entity.Reservation;
 import com.cmpe275.AirlineReservationSystem.repository.PassengerRepository;
 import com.cmpe275.AirlineReservationSystem.repository.ReservationRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,13 +38,13 @@ public class FlightService {
 	@Autowired
 	private PassengerRepository passengerRepository;
 
-	public ResponseEntity<?> getFlightByNumber(String flightNumber){
+	public ResponseEntity<?> getFlightByNumber(String flightNumber) throws NotFoundException {
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
 		if(res.isPresent()) {
 			Flight flight = res.get();
 			return new ResponseEntity<>(flight, HttpStatus.OK);
 		}else{
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sorry, the requested flight with number "
+			throw new NotFoundException("Sorry, the requested flight with number "
 					+flightNumber+" does not exist");
 		}
 	}
@@ -63,11 +64,11 @@ public class FlightService {
 			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
 					new ArrayList<Flight>() {{add(finalFlight);}});
 			if(reservationList.size() > capacity) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+				throw new IllegalArgumentException(
 						"target capacity less than active reservations");
 			}
 			if(!checkValidUpdate(aTime, dTime)){
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+				throw new IllegalArgumentException(
 						"flight timings overlapping with other passenger reservations");
 			}
 			flight.setPrice(price);
@@ -106,22 +107,22 @@ public class FlightService {
 		return true;
 	}
 
-	public ResponseEntity<?> deleteFlight(String flightNumber){
+	public ResponseEntity<?> deleteFlight(String flightNumber) throws NotFoundException {
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
 		if(res.isPresent()){
 			Flight flight = res.get();
 			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
 					new ArrayList<Flight>() {{add(flight);}});
 			if(!reservationList.isEmpty()){
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Flight with number "
+				throw new IllegalArgumentException("Flight with number "
 						+ flightNumber +" cannot be deleted");
 			} else {
 				flightRepository.delete(flight);
-				throw new ResponseStatusException(HttpStatus.OK, "Flight with number "+ flightNumber
+				throw new IllegalArgumentException("Flight with number "+ flightNumber
 						+" is deleted successfully");
 			}
 		}else{
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sorry, the requested flight with number "
+			throw new NotFoundException("Sorry, the requested flight with number "
 					+flightNumber+" does not exist");
 		}
 	}

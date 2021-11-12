@@ -4,12 +4,15 @@
 package com.cmpe275.AirlineReservationSystem.controller;
 
 import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
 
 import com.cmpe275.AirlineReservationSystem.service.FlightService;
+
+import java.text.ParseException;
 
 /**
  * @author vinayguda
@@ -29,8 +32,8 @@ public class FlightController {
 	) {
 		try{
 			return flightService.getFlightByNumber(flightNumber);
-		} catch (Exception ex){
-			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
+		} catch (NotFoundException ex){
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
 		}
 
 	}
@@ -43,7 +46,9 @@ public class FlightController {
 	) {
 		try{
 			return flightService.deleteFlight(flightNumber);
-		} catch (Exception ex) {
+		} catch (NotFoundException ex) {
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
+		} catch (IllegalArgumentException ex){
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 	}
@@ -67,7 +72,9 @@ public class FlightController {
 		try{
 			return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
 					arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
-		} catch (Exception ex){
+		} catch (IllegalArgumentException ex){
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
+		}catch (ParseException ex){
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 	}

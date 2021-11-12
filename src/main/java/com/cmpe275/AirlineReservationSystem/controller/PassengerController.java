@@ -68,7 +68,7 @@ public class PassengerController {
 			) {
 		try {
 			return service.createPassenger(firstname, lastname, age, gender, phone);
-		} catch (Exception ex) {
+		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}
 	}
@@ -82,7 +82,7 @@ public class PassengerController {
 			 {
 			 try{
 				 return service.getPassenger(id);
-			 }catch(Exception e){
+			 }catch(NotFoundException e){
 				return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404,e.getMessage())));
 			 }
 	}

@@ -49,12 +49,12 @@ public class ReservationService {
     			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightList);
         		if(isFirstTimeOverlap) {
         	    	System.out.println("Time overlap within same reservation");
-        			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation,there is time overlap between the flights within same reservation");
+        			throw new IllegalArgumentException("Can not create reservation,there is time overlap between the flights within same reservation");
         		}
         		boolean isSecondTimeOverlap=isTimeOverlapForSamePerson( passengerId,flightList);
         		if(isSecondTimeOverlap) {
         			System.out.println("Time overlap within for same Person");
-        			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation,the same person cannot have two reservations that overlap with each other");
+        			throw new IllegalArgumentException("Can not create reservation,the same person cannot have two reservations that overlap with each other");
         		}
     		}
     		//check for capacity
@@ -76,16 +76,16 @@ public class ReservationService {
     			Reservation res =reservationRepository.save(newReservation);
     			return new ResponseEntity<>(res, HttpStatus.OK);
     		}else {
-    	    	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation, No seats available. Flight capacity full.");
+    	    	throw new IllegalArgumentException("Can not create reservation, No seats available. Flight capacity full.");
     		}
 	
-    	}else  throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not create reservation, Passenger or flight Number must be empty.");
+    	}else  throw new IllegalArgumentException( "Can not create reservation, Passenger or flight Number must be empty.");
 	
     }
    
  
     
-    public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightsRemoved) {
+    public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightsRemoved) throws NotFoundException {
     	Reservation existingReservation= reservationRepository.findByReservationNumber(number); 
     	if(existingReservation!=null) {
     		Passenger passenger= existingReservation.getPassenger();
@@ -111,12 +111,12 @@ public class ReservationService {
         			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightListToAdd);
             		if(isFirstTimeOverlap) {
             	    	System.out.println("Time overlap within same reservation");
-            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update, there is time overlap between the flights within same reservation");
+            			throw new IllegalArgumentException("Can not update, there is time overlap between the flights within same reservation");
             		}
             		boolean isSecondTimeOverlap=isTimeOverlapForSamePerson( passengerId,flightListToAdd);
             		if(isSecondTimeOverlap) {
             			System.out.println("Time overlap within for same Person");
-            			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not update, the same person cannot have two reservations that overlap with each other");
+            			throw new IllegalArgumentException("Can not update, the same person cannot have two reservations that overlap with each other");
             		}
         		}
     			if(isSeatsAvailable(flightListToAdd)) {
@@ -128,7 +128,7 @@ public class ReservationService {
 	    			existingReservation.setPrice(newPrice);
 	    			reduceAvailableFlightSeats(flightListToAdd);
     			}else {
-    				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No seats available. Flight capacity full.");
+    				throw new IllegalArgumentException("No seats available. Flight capacity full.");
     			}
     			
     		}
@@ -138,7 +138,7 @@ public class ReservationService {
     		return new ResponseEntity<>(resUpdate, HttpStatus.OK);
     		
     	}else {
-    		 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No reservation found for given reservation number");
+    		 throw new NotFoundException( "No reservation found for given reservation number");
     	}
     	
     }
@@ -156,7 +156,7 @@ public class ReservationService {
         		increaseAvailableFlightSeats(flightList);
         	return new ResponseEntity<>("Reservation with number " + reservationNumber + " is deleted successfully ", HttpStatus.OK);
         }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with number "+reservationNumber+" does not exist");
+            throw new IllegalArgumentException("Reservation with number "+reservationNumber+" does not exist");
         } 	
     }
     

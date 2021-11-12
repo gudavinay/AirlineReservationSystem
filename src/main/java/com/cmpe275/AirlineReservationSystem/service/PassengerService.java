@@ -31,7 +31,7 @@ public class PassengerService {
 			Passenger res =passengerRepository.save(newPassenger);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 		} else {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Another passenger with the same number already exists.");
+			throw new IllegalArgumentException("Another passenger with the same number already exists.");
 			//return new ResponseEntity<>("Another passenger with the same number already exists.", HttpStatus.BAD_REQUEST);
 		}
 
@@ -101,13 +101,13 @@ public class PassengerService {
 		}
 	}
 
-	public ResponseEntity<?> getPassenger(String id) {
+	public ResponseEntity<?> getPassenger(String id) throws NotFoundException {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
 			Passenger passenger = existingPass.get();
 			return new ResponseEntity<>(passenger, HttpStatus.OK);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Passenger with id "+id+" does not exist");
+			throw new NotFoundException("Passenger with id "+id+" does not exist");
 		}
 	}
 }
