@@ -154,7 +154,7 @@ public class ReservationService {
         	List<Flight> flightList=res.getFlights();
         	if(flightList.size()!=0) 
         		increaseAvailableFlightSeats(flightList);
-        	return new ResponseEntity<>("Reservation with number " + reservationNumber + " is deleted successfully ", HttpStatus.OK);
+        	return new ResponseEntity<>("Reservation with number " + reservationNumber + " is canceled successfully ", HttpStatus.OK);
         }else {
             throw new IllegalArgumentException("Reservation with number "+reservationNumber+" does not exist");
         } 	

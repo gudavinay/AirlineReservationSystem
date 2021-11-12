@@ -59,7 +59,7 @@ public class PassengerService {
 				throw new IllegalArgumentException("Passenger with same phone number already exist");
 			}
 		} else {
-			throw new NotFoundException("Passenger Does not exist");
+			throw new NotFoundException("Passenger with "+id+" Does not exist");
 		}
 	}
 
@@ -97,7 +97,7 @@ public class PassengerService {
 			passengerRepository.deleteById(id);
 			return new ResponseEntity<>("Passenger with id" + id + " is deleted successfully ", HttpStatus.OK);
 		} else {
-			throw new NotFoundException("Passenger Does not exist");
+			throw new NotFoundException("Passenger with id "+id+" does not exist");
 		}
 	}
 
@@ -107,7 +107,7 @@ public class PassengerService {
 			Passenger passenger = existingPass.get();
 			return new ResponseEntity<>(passenger, HttpStatus.OK);
 		} else {
-			throw new NotFoundException("Passenger with id "+id+" does not exist");
+			throw new NotFoundException("Sorry, the requested passenger with ID "+id+" does not exist");
 		}
 	}
 }

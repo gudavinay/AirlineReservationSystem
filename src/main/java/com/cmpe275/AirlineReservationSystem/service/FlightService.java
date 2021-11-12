@@ -118,8 +118,7 @@ public class FlightService {
 						+ flightNumber +" cannot be deleted");
 			} else {
 				flightRepository.delete(flight);
-				throw new IllegalArgumentException("Flight with number "+ flightNumber
-						+" is deleted successfully");
+				return new ResponseEntity<>("Flight with number" + flightNumber + " is deleted successfully ", HttpStatus.OK);
 			}
 		}else{
 			throw new NotFoundException("Sorry, the requested flight with number "

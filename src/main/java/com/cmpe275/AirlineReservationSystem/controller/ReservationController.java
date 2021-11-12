@@ -45,7 +45,7 @@ public class ReservationController {
  			 {
  		
     	try {
-			return reservationService.createReservation(passengerId, flightNumbers);	
+			return reservationService.createReservation(passengerId, flightNumbers);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
 		}
@@ -61,7 +61,7 @@ public class ReservationController {
    			)
    			 {
     	try {
-    		return reservationService.updateReservation(number, flightsAdded,flightsRemoved);	
+			return reservationService.updateReservation(number, flightsAdded,flightsRemoved);
     	}catch (IllegalArgumentException e) {
     		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
 		}catch (NotFoundException e) {
@@ -77,7 +77,7 @@ public class ReservationController {
    			 {
     	try {
     		reservationService.cancelReservation(number);
-    		return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Reservation with number " + number + " is deleted successfully "));
+    		return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Reservation with number " + number + " is cancelled successfully "));
     	}catch (IllegalArgumentException e) {
     		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
 		}

@@ -4,8 +4,10 @@
 package com.cmpe275.AirlineReservationSystem.controller;
 
 import com.cmpe275.AirlineReservationSystem.Util.ExceptionHandle;
+import com.cmpe275.AirlineReservationSystem.Util.Response;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.cmpe275.AirlineReservationSystem.Util.BadRequest;
@@ -70,8 +72,9 @@ public class FlightController {
 			@RequestParam(value="xml", required=false) String xml
 	) {
 		try{
-			return flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
+			flightService.updateFlight(flightNumber, price, origin, destination, departureTime,
 					arrivalTime, description, capacity, model, manufacturer, yearOfManufacture);
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Flight with id" + flightNumber + " is deleted successfully "));
 		} catch (IllegalArgumentException ex){
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		}catch (ParseException ex){
