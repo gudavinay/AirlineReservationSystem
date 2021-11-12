@@ -28,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 public class FlightService {
-	
+
 	@Autowired
 	private FlightRepository flightRepository;
 
@@ -40,36 +40,39 @@ public class FlightService {
 
 	public ResponseEntity<?> getFlightByNumber(String flightNumber) throws NotFoundException {
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
-		if(res.isPresent()) {
+		if (res.isPresent()) {
 			Flight flight = res.get();
 			return new ResponseEntity<>(flight, HttpStatus.OK);
-		}else{
-			throw new NotFoundException("Sorry, the requested flight with number "
-					+flightNumber+" does not exist");
+		} else {
+			throw new NotFoundException("Sorry, the requested flight with number " + flightNumber + " does not exist");
 		}
 	}
 
-	public ResponseEntity<?> updateFlight(String flightNumber, int price, String origin, String destination
-			, String departureTime, String arrivalTime, String description, int capacity, String model
-			, String manufacturer, int yearOfManufacture) throws ParseException {
-		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
+	public ResponseEntity<?> updateFlight(String flightNumber, int price, String origin, String destination,
+			String departureTime, String arrivalTime, String description, int capacity, String model,
+			String manufacturer, int yearOfManufacture) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH");
-		Flight flight;
-		Plane plane;
 		Date dTime = formatter.parse(departureTime);
 		Date aTime = formatter.parse(arrivalTime);
-		if(res.isPresent()) {
+		if (origin.equals(destination) || aTime.compareTo(dTime) <= 0) {
+			throw new IllegalArgumentException("Illegal arguments entered to create/update flight.");
+		}
+		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
+		Flight flight;
+		Plane plane;
+		if (res.isPresent()) {
 			flight = res.get();
 			Flight finalFlight = flight;
-			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
-					new ArrayList<Flight>() {{add(finalFlight);}});
-			if(reservationList.size() > capacity) {
-				throw new IllegalArgumentException(
-						"target capacity less than active reservations");
+			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(new ArrayList<Flight>() {
+				{
+					add(finalFlight);
+				}
+			});
+			if (reservationList.size() > capacity) {
+				throw new IllegalArgumentException("target capacity less than active reservations");
 			}
-			if(!checkValidUpdate(aTime, dTime)){
-				throw new IllegalArgumentException(
-						"flight timings overlapping with other passenger reservations");
+			if (!checkValidUpdate(flightNumber, aTime, dTime)) {
+				throw new IllegalArgumentException("flight timings overlapping with other passenger reservations");
 			}
 			flight.setPrice(price);
 			flight.setOrigin(origin);
@@ -82,23 +85,26 @@ public class FlightService {
 			flight.getPlane().setModel(model);
 			flight.getPlane().setManufacturer(manufacturer);
 			flight.getPlane().setYearOfManufacture(yearOfManufacture);
-		}else{
+		} else {
 			plane = new Plane(capacity, model, manufacturer, yearOfManufacture);
-			flight = new Flight(flightNumber, price, origin, destination, dTime, aTime
-					, capacity, description, plane, new ArrayList<>());
+			flight = new Flight(flightNumber, price, origin, destination, dTime, aTime, capacity, description, plane,
+					new ArrayList<>());
 		}
 		flight = flightRepository.save(flight);
 		return new ResponseEntity<>(flight, HttpStatus.OK);
 	}
 
-	private boolean checkValidUpdate(Date currentFlightArrivalTime, Date currentFlightDepartureTime){
-		for(Passenger passenger: passengerRepository.findAll()){
-			for(Reservation reservation: passenger.getReservations()){
-				for(Flight flight: reservation.getFlights()){
+	private boolean checkValidUpdate(String flightNumber, Date currentFlightArrivalTime,
+			Date currentFlightDepartureTime) {
+		for (Passenger passenger : passengerRepository.findAll()) {
+			for (Reservation reservation : passenger.getReservations()) {
+				for (Flight flight : reservation.getFlights()) {
+					if (flight.getFlightNumber().equals(flightNumber))
+						continue;
 					Date flightDepartureTime = flight.getDepartureTime();
 					Date flightArrivalTime = flight.getArrivalTime();
-					if(currentFlightArrivalTime.compareTo(flightDepartureTime) <= 0
-							&& currentFlightDepartureTime.compareTo(flightArrivalTime) >= 0) {
+					if (currentFlightArrivalTime.compareTo(flightDepartureTime) >= 0
+							&& currentFlightDepartureTime.compareTo(flightArrivalTime) <= 0) {
 						return false;
 					}
 				}
@@ -109,20 +115,22 @@ public class FlightService {
 
 	public ResponseEntity<?> deleteFlight(String flightNumber) throws NotFoundException {
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
-		if(res.isPresent()){
+		if (res.isPresent()) {
 			Flight flight = res.get();
-			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
-					new ArrayList<Flight>() {{add(flight);}});
-			if(!reservationList.isEmpty()){
-				throw new IllegalArgumentException("Flight with number "
-						+ flightNumber +" cannot be deleted");
+			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(new ArrayList<Flight>() {
+				{
+					add(flight);
+				}
+			});
+			if (!reservationList.isEmpty()) {
+				throw new IllegalArgumentException("Flight with number " + flightNumber + " cannot be deleted");
 			} else {
 				flightRepository.delete(flight);
-				return new ResponseEntity<>("Flight with number" + flightNumber + " is deleted successfully ", HttpStatus.OK);
+				return new ResponseEntity<>("Flight with number " + flightNumber + " is deleted successfully",
+						HttpStatus.OK);
 			}
-		}else{
-			throw new NotFoundException("Sorry, the requested flight with number "
-					+flightNumber+" does not exist");
+		} else {
+			throw new NotFoundException("Sorry, the requested flight with number " + flightNumber + " does not exist");
 		}
 	}
 }
