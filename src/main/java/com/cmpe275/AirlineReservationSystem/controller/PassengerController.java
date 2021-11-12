@@ -36,7 +36,7 @@ public class PassengerController {
 			return service.updatePassenger(id, firstname,
 					lastname, age, gender, phone);
 		}catch (Exception ex){
-			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
+			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, ex.getMessage())));
 		}
     }
 

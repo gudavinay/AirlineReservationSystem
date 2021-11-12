@@ -28,7 +28,7 @@ public class ReservationController {
     	try {
     		return reservationService.getReservation(number);
     	}catch (Exception e) {
-    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
+    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, e.getMessage())));
 		}
          
     }
