@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -61,7 +62,11 @@ public class ReservationService {
     	Optional<Passenger> passenger = passengerRepository.findById(passengerId);
     	
     	if(passenger.isPresent() && !CollectionUtils.isEmpty(flightNumbers)) {
-    		List<Flight> flightList = getFlightList(flightNumbers);
+    		List<String> trimmedFlightNumbers = flightNumbers.stream()
+    		        .map(String::trim)
+    		        .collect(Collectors.toList());
+    		System.out.println("flight numbers: " + trimmedFlightNumbers);
+    		List<Flight> flightList = getFlightList(trimmedFlightNumbers);
     		if(flightList.size()>1) {
     			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightList);
         		if(isFirstTimeOverlap) {
@@ -112,25 +117,39 @@ public class ReservationService {
     public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightsRemoved) throws NotFoundException {
     	Reservation existingReservation= reservationRepository.findByReservationNumber(number); 
     	if(existingReservation!=null) {
+    		List<Flight> existingFlightList = existingReservation.getFlights();
+    		if( CollectionUtils.isEmpty(flightsAdded) && !CollectionUtils.isEmpty(flightsRemoved) && existingFlightList.size()<= flightsRemoved.size()) {
+    			throw new IllegalArgumentException("Can not update, Reservation has lesser or equal flights user trying to remove");
+    		}
     		Passenger passenger= existingReservation.getPassenger();
         	String passengerId= passenger.getId();
-        	List<Flight> existingFlightList = existingReservation.getFlights();
+        	
         	int existingPrice = existingReservation.getPrice();
         	//Removing flights first
         	if(!CollectionUtils.isEmpty(flightsRemoved)) {
-    			List<Flight> flightListToRemove = getFlightList(flightsRemoved);
+        		System.out.println("flightsRemoved: " +flightsRemoved);
+        		List<String> trimmedFlightsRemoved = flightsRemoved.stream()
+        		        .map(String::trim)
+        		        .collect(Collectors.toList());
+    			List<Flight> flightListToRemove = getFlightList(trimmedFlightsRemoved);
     			if(existingFlightList.size()!=0) {
     				existingFlightList.removeAll(flightListToRemove);
     				increaseAvailableFlightSeats(flightListToRemove);	
     			}
     			int newPrice=existingPrice-calculatePrice(flightListToRemove);
-    			existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
-    			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
+    			if(existingFlightList.size()>0) {
+    				existingReservation.setOrigin(existingFlightList.get(0).getOrigin());
+        			existingReservation.setDestination(existingFlightList.get(existingFlightList.size()-1).getDestination());
+    			}
     			existingReservation.setPrice(newPrice);	
     		}
         	////Adding flights later
     		if(!CollectionUtils.isEmpty(flightsAdded)) {
-    			List<Flight> flightListToAdd = getFlightList(flightsAdded);
+    			System.out.println("flightsAdded: " +flightsAdded);
+    			List<String> trimmedFlightsAdded = flightsAdded.stream()
+        		        .map(String::trim)
+        		        .collect(Collectors.toList());
+    			List<Flight> flightListToAdd = getFlightList(trimmedFlightsAdded);
     			if(flightListToAdd.size()>1) {
         			boolean isFirstTimeOverlap=isTimeOverlapWithinReservation(flightListToAdd);
             		if(isFirstTimeOverlap) {
