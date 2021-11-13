@@ -78,8 +78,8 @@ public class ReservationController {
     	try {
     		reservationService.cancelReservation(number);
     		return ResponseEntity.status(HttpStatus.OK).body(new Response(200,"Reservation with number " + number + " is cancelled successfully "));
-    	}catch (IllegalArgumentException e) {
-    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, e.getMessage())));
+    	}catch (NotFoundException e) {
+    		return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(404, e.getMessage())));
 		}
 	
    	}

@@ -144,7 +144,7 @@ public class ReservationService {
     }
     
     //need to rework
-    public ResponseEntity<?> cancelReservation( String reservationNumber) {
+    public ResponseEntity<?> cancelReservation( String reservationNumber) throws NotFoundException {
     	Reservation res=reservationRepository.findByReservationNumber(reservationNumber);
         if(res !=null){
         	
@@ -156,7 +156,7 @@ public class ReservationService {
         		increaseAvailableFlightSeats(flightList);
         	return new ResponseEntity<>("Reservation with number " + reservationNumber + " is canceled successfully ", HttpStatus.OK);
         }else {
-            throw new IllegalArgumentException("Reservation with number "+reservationNumber+" does not exist");
+            throw new NotFoundException("Reservation with number "+reservationNumber+" does not exist");
         } 	
     }
     

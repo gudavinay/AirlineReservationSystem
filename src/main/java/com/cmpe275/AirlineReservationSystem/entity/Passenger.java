@@ -44,9 +44,9 @@ public class Passenger {
 	@JsonIgnoreProperties({"passenger", "price","flights"})
 	private List<Reservation> reservations;
 	
-	@ManyToMany(targetEntity=Flight.class, cascade=CascadeType.ALL)
-	@JsonIgnoreProperties({"price","seatsLeft","description","plane","passengers"})
-	private List<Flight> flight;
+//	@ManyToMany(targetEntity=Flight.class, cascade=CascadeType.ALL)
+//	@JsonIgnoreProperties({"price","seatsLeft","description","plane","passengers"})
+//	private List<Flight> flight;
 
 	public Passenger(){};
 	
@@ -113,12 +113,12 @@ public class Passenger {
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
-
-	public List<Flight> getFlight() {
-		return flight;
-	}
-
-	public void setFlight(List<Flight> flight) {
-		this.flight = flight;
-	}
+//
+//	public List<Flight> getFlight() {
+//		return flight;
+//	}
+//
+//	public void setFlight(List<Flight> flight) {
+//		this.flight = flight;
+//	}
 }

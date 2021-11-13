@@ -63,10 +63,8 @@ public class FlightController {
 			@RequestParam("manufacturer") String manufacturer, @RequestParam("yearOfManufacture") int yearOfManufacture,
 			@RequestParam(value = "xml", required = false) String xml) {
 		try {
-			flightService.updateFlight(flightNumber, price, origin, destination, departureTime, arrivalTime,
+			return flightService.updateFlight(flightNumber, price, origin, destination, departureTime, arrivalTime,
 					description, capacity, model, manufacturer, yearOfManufacture);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(200, "Flight with id" + flightNumber + " is deleted successfully "));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(new ExceptionHandle(new BadRequest(400, ex.getMessage())));
 		} catch (ParseException ex) {
