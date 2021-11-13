@@ -144,13 +144,12 @@ public class FlightService {
 	private boolean checkValidUpdate(Flight currentFlight, Date currentFlightArrivalTime,
 									 Date currentFlightDepartureTime) {
 		for (Passenger passenger : passengerRepository.findAll()) {
-			List<Flight> flights = new ArrayList<>();
-			boolean isCurrentFLightPresent = false;
+			Set<Flight> flights = new HashSet<>();
 			for (Reservation reservation : passenger.getReservations()) {
-				if(reservation.getFlights().contains(currentFlight)) isCurrentFLightPresent = true;
 				flights.addAll(reservation.getFlights());
 			}
-			if(isCurrentFLightPresent){
+			if(flights.contains(currentFlight)){
+				flights.remove(currentFlight);
 				for(Flight flight: flights){
 					Date flightDepartureTime = flight.getDepartureTime();
 					Date flightArrivalTime = flight.getArrivalTime();
