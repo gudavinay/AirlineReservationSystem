@@ -16,6 +16,12 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+/**
+ * 
+ * @author payalghule
+ * Reservation controller to handle all reservation service method
+ *
+ */
 @Transactional(rollbackOn = {IOException.class, SQLException.class})
 @RestController
 public class ReservationController {
@@ -23,6 +29,12 @@ public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
+    /**
+     * Get the reservation
+     * @param number
+     * @param xml
+     * @return
+     */
     @RequestMapping(value="/reservation/{number}", method= RequestMethod.GET, produces={"application/json", "application/xml"})
     public ResponseEntity<?> getReservation(
             @PathVariable String number,
@@ -36,6 +48,13 @@ public class ReservationController {
          
     }
     
+    /**
+     * create the reservation
+     * @param passengerId
+     * @param flightNumbers
+     * @param xml
+     * @return
+     */
     @RequestMapping(value="/reservation", method=RequestMethod.POST, produces={"application/json", "application/xml"})
  	public ResponseEntity<?> createReservation(
  			@RequestParam("passengerId") String passengerId,
@@ -52,6 +71,14 @@ public class ReservationController {
  		
  	}
     
+    /**
+     * update the reservation
+     * @param number
+     * @param flightsAdded
+     * @param flightsRemoved
+     * @param xml
+     * @return
+     */
     @RequestMapping(value="/reservation/{number}", method=RequestMethod.POST, produces={"application/json", "application/xml"})
    	public ResponseEntity<?> updateReservation(
    			@PathVariable String number,
@@ -69,6 +96,12 @@ public class ReservationController {
 		}
    	}
     
+    /**
+     * cancel the reservation
+     * @param number
+     * @param xml
+     * @return
+     */
     @RequestMapping(value="/reservation/{number}", method=RequestMethod.DELETE, produces={"application/json", "application/xml"})
    	public ResponseEntity<?> cancelReservation(
    			@PathVariable String number,

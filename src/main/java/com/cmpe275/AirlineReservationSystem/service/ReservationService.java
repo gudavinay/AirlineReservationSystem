@@ -12,13 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 
+ * @author payalghule
+ *
+ */
 @Service
 public class ReservationService {
 
@@ -31,6 +36,12 @@ public class ReservationService {
 	@Autowired
 	private FlightRepository flightRepository;
 
+	/**
+	 * This method is used to get reservation for given id
+	 * @param id
+	 * @return
+	 * @throws NotFoundException
+	 */
     public ResponseEntity<?> getReservation(String id) throws NotFoundException {
         Optional<Reservation> existingRes=reservationRepository.findById(id);
 		//ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation with number "+id+" does not exist");
@@ -40,6 +51,12 @@ public class ReservationService {
         }else throw new NotFoundException("Reservation with number " + id + " does not exist");
     }
     
+    /**
+     * This method is used to create a reservation for passenger
+     * @param passengerId
+     * @param flightNumbers
+     * @return
+     */
    public ResponseEntity<?> createReservation(String passengerId, List<String> flightNumbers) {
     	Optional<Passenger> passenger = passengerRepository.findById(passengerId);
     	
@@ -83,7 +100,14 @@ public class ReservationService {
 	
     }
    
- 
+ /**
+  * This method is used to update a reservation for passenger
+  * @param number
+  * @param flightsAdded
+  * @param flightsRemoved
+  * @return
+  * @throws NotFoundException
+  */
     
     public ResponseEntity<?> updateReservation( String number, List<String> flightsAdded, List<String>  flightsRemoved) throws NotFoundException {
     	Reservation existingReservation= reservationRepository.findByReservationNumber(number); 
@@ -143,12 +167,16 @@ public class ReservationService {
     	
     }
     
-    //need to rework
+    /**
+     * This method is used to cancel reservation for passenger
+     * @param reservationNumber
+     * @return
+     * @throws NotFoundException
+     */
     public ResponseEntity<?> cancelReservation( String reservationNumber) throws NotFoundException {
     	Reservation res=reservationRepository.findByReservationNumber(reservationNumber);
         if(res !=null){
         	
-        	//not sure about below line will work or not - but we need to remove reservation from passenger
         	res.getPassenger().getReservations().remove(res);
         	reservationRepository.delete(res);
         	List<Flight> flightList=res.getFlights();
@@ -246,10 +274,5 @@ public class ReservationService {
  		}
  	}
     
-    public boolean checkFlightSequnce(List<Flight> flightList) {
-    	for(Flight flight : flightList){
- 			
- 		}
-    	return false;
-    }
+
 }
