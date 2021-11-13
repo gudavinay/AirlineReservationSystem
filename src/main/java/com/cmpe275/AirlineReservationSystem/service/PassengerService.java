@@ -15,6 +15,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+/**
+ * Passenger Class is used to handle the operations related to passenger details
+ * @author divyamittal
+ * @version 1.0
+ */
 @Service
 public class PassengerService {
 	@Autowired
@@ -23,6 +28,15 @@ public class PassengerService {
 	 @Autowired
 	 private ReservationRepository reservationRepository;
 
+	/**
+	 * Create the passenger
+	 * @param firstname
+	 * @param lastname
+	 * @param age
+	 * @param gender
+	 * @param phone
+	 * @return
+	 */
 	public ResponseEntity<?> createPassenger(String firstname, String lastname, String age, String gender,
 			String phone) {
 		Passenger isPassengerExists = passengerRepository.findByPhone(phone);
@@ -37,6 +51,17 @@ public class PassengerService {
 
 	}
 
+	/**
+	 * Update thePassenger details
+	 * @param id
+	 * @param firstname
+	 * @param lastname
+	 * @param age
+	 * @param gender
+	 * @param phone
+	 * @return
+	 * @throws NotFoundException
+	 */
 	public ResponseEntity<?> updatePassenger(String id, String firstname, String lastname, String age, String gender,
 			String phone) throws NotFoundException {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
@@ -63,6 +88,11 @@ public class PassengerService {
 		}
 	}
 
+	/**
+	 * Delete the reservations of passenger
+	 * @param reservation
+	 * @param passenger
+	 */
 	public void deleteReservation(Reservation reservation, Passenger passenger) {
 		try {
 			for (Flight flight : reservation.getFlights()) {
@@ -76,6 +106,10 @@ public class PassengerService {
 		}
 	}
 
+	/**
+	 * Update the flight seats
+	 * @param flight
+	 */
 	public void updateFlightSeats(Flight flight) {
 		try {
 			flight.setSeatsLeft(flight.getSeatsLeft() + 1);
@@ -84,6 +118,12 @@ public class PassengerService {
 		}
 	}
 
+	/**
+	 * This function is used to delete the passengers
+	 * @param id
+	 * @return
+	 * @throws NotFoundException
+	 */
 	public ResponseEntity<?> deletePassenger(String id) throws NotFoundException {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {
@@ -101,6 +141,12 @@ public class PassengerService {
 		}
 	}
 
+	/**
+	 * Get Passenger Details
+	 * @param id
+	 * @return
+	 * @throws NotFoundException
+	 */
 	public ResponseEntity<?> getPassenger(String id) throws NotFoundException {
 		Optional<Passenger> existingPass = passengerRepository.findById(id);
 		if (existingPass.isPresent()) {

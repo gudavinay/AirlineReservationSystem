@@ -49,7 +49,15 @@ public class Passenger {
 	private List<Flight> flight;
 
 	public Passenger(){};
-	
+
+	/**
+	 * Constructor for passenger
+	 * @param firstname
+	 * @param lastname
+	 * @param age
+	 * @param gender
+	 * @param phone
+	 */
 	public Passenger(String firstname, String lastname, int age, String gender, String phone) {
 		this.firstname = firstname;
 		this.lastname = lastname;

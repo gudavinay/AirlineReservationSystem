@@ -15,7 +15,11 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.sql.SQLException;
 
-
+/**
+ * This class used to handle passenger services
+ * @author divyamittal
+ * @version :1.0
+ */
 @Transactional
 @RestController
 public class PassengerController {
@@ -23,6 +27,17 @@ public class PassengerController {
     @Autowired
     private PassengerService service;
 
+	/**
+	 * This method is used to update the passenger details
+	 * @param id
+	 * @param firstname
+	 * @param lastname
+	 * @param age
+	 * @param gender
+	 * @param phone
+	 * @param xml
+	 * @return
+	 */
     @RequestMapping(value="/passenger/{id}", method=RequestMethod.PUT, produces={"application/json", "application/xml"})
     public ResponseEntity<?> updatePassenger(
             @PathVariable String id,
@@ -43,6 +58,12 @@ public class PassengerController {
 		}
     }
 
+	/**
+	 * This method is used to delete the passengers
+	 * @param id
+	 * @param xml
+	 * @return
+	 */
     @RequestMapping(value="/passenger/{id}", method=RequestMethod.DELETE, produces={"application/json", "application/xml"})
     public ResponseEntity<?> deletePassenger(
             @PathVariable String id,
@@ -73,7 +94,12 @@ public class PassengerController {
 		}
 	}
 
-    
+	/**
+	 * This method is used to get the passengers
+	 * @param id
+	 * @param xml
+	 * @return
+	 */
     @RequestMapping(value="/passenger/{id}", method=RequestMethod.GET, produces={"application/json", "application/xml"})
 	public ResponseEntity<?> getPassenger(
 			@PathVariable("id") String id,

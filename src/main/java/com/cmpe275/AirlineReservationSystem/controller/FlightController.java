@@ -25,7 +25,6 @@ public class FlightController {
 
 	@Autowired
 	private FlightService flightService;
-
 	@RequestMapping(value = "/flight/{flightNumber}", method = RequestMethod.GET, produces = { "application/json",
 			"application/xml" })
 	public ResponseEntity<?> getFlightByNumber(@PathVariable("flightNumber") String flightNumber,
