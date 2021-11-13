@@ -8,7 +8,7 @@ Airline Reservation System for CMPE 275 Lab2
 4. Nikhil Raj
 
 
-#API ScreenShots
+# API ScreenShots
 
 1.Get a passenger
 2.Create a passenger
