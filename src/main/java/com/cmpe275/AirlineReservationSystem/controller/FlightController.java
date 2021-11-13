@@ -17,14 +17,22 @@ import com.cmpe275.AirlineReservationSystem.service.FlightService;
 import java.text.ParseException;
 
 /**
- * @author vinayguda
- *
+ * This class used to handle passenger services
+ * @author Nikhil Raj Karlapudi
+ * @version :1.0
  */
 @RestController
 public class FlightController {
 
 	@Autowired
 	private FlightService flightService;
+
+	/**
+	 * This method is used to fetch the flight details.
+	 * @param flightNumber
+	 * @param xml
+	 * @return
+	 */
 	@RequestMapping(value = "/flight/{flightNumber}", method = RequestMethod.GET, produces = { "application/json",
 			"application/xml" })
 	public ResponseEntity<?> getFlightByNumber(@PathVariable("flightNumber") String flightNumber,
@@ -37,6 +45,12 @@ public class FlightController {
 
 	}
 
+	/**
+	 * This method is used to delete a flight.
+	 * @param flightNumber
+	 * @param xml
+	 * @return
+	 */
 	@RequestMapping(value = "/airline/{flightNumber}", method = RequestMethod.DELETE, produces = { "application/json",
 			"application/xml" })
 	public ResponseEntity<?> deleteFlight(@PathVariable("flightNumber") String flightNumber,
@@ -52,6 +66,22 @@ public class FlightController {
 		}
 	}
 
+	/**
+	 * This method is used to create/update a flight.
+	 * @param flightNumber
+	 * @param price
+	 * @param origin
+	 * @param destination
+	 * @param departureTime
+	 * @param arrivalTime
+	 * @param description
+	 * @param capacity
+	 * @param model
+	 * @param manufacturer
+	 * @param yearOfManufacture
+	 * @param xml
+	 * @return
+	 */
 	@RequestMapping(value = "/flight/{flightNumber}", method = RequestMethod.POST, produces = { "application/json",
 			"application/xml" })
 	public ResponseEntity<?> updateFlight(@PathVariable("flightNumber") String flightNumber,

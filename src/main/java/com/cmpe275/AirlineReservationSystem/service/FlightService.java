@@ -22,8 +22,9 @@ import com.cmpe275.AirlineReservationSystem.entity.Flight;
 import com.cmpe275.AirlineReservationSystem.repository.FlightRepository;
 
 /**
- * @author vinayguda
- *
+ * Flight service Class is to handle the operations related to Flights
+ * @author Nikhil Raj Karlapudi
+ * @version 1.0
  */
 @Service
 public class FlightService {
@@ -37,6 +38,11 @@ public class FlightService {
 	@Autowired
 	private PassengerRepository passengerRepository;
 
+	/**
+	 * This method is used to fetch details of a flight.
+	 * @param flightNumber
+	 * @return
+	 */
 	public ResponseEntity<?> getFlightByNumber(String flightNumber) throws NotFoundException {
 		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
 		if (res.isPresent()) {
@@ -47,6 +53,21 @@ public class FlightService {
 		}
 	}
 
+	/**
+	 * This method is used to create/update a flight.
+	 * @param flightNumber
+	 * @param price
+	 * @param origin
+	 * @param destination
+	 * @param departureTime
+	 * @param arrivalTime
+	 * @param description
+	 * @param capacity
+	 * @param model
+	 * @param manufacturer
+	 * @param yearOfManufacture
+	 * @return
+	 */
 	public ResponseEntity<?> updateFlight(String flightNumber, int price, String origin, String destination,
 			String departureTime, String arrivalTime, String description, int capacity, String model,
 			String manufacturer, int yearOfManufacture) throws ParseException {
@@ -90,8 +111,38 @@ public class FlightService {
 		return new ResponseEntity<>(flight, HttpStatus.OK);
 	}
 
+	/**
+	 * This method is used to fetch details of a flight.
+	 * @param flightNumber
+	 * @return
+	 */
+	public void deleteFlight(String flightNumber) throws NotFoundException {
+		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
+		if (res.isPresent()) {
+			Flight flight = res.get();
+			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
+					new ArrayList<Flight>() {{add(flight);}});
+			if (!reservationList.isEmpty()) {
+				throw new IllegalArgumentException("Flight " + flightNumber + " has active reservations");
+			} else {
+				flightRepository.delete(flight);
+				new ResponseEntity<>(HttpStatus.OK);
+			}
+		} else {
+			throw new NotFoundException("Sorry, the requested flight with number " + flightNumber + " does not exist");
+		}
+	}
+
+	/**
+	 * This method is used to check if updated flight details do not collide with the any flights already
+	 * reserved for passengers.
+	 * @param currentFlight
+	 * @param currentFlightArrivalTime
+	 * @param currentFlightDepartureTime
+	 * @return
+	 */
 	private boolean checkValidUpdate(Flight currentFlight, Date currentFlightArrivalTime,
-			Date currentFlightDepartureTime) {
+									 Date currentFlightDepartureTime) {
 		for (Passenger passenger : passengerRepository.findAll()) {
 			List<Flight> flights = new ArrayList<>();
 			boolean isCurrentFLightPresent = false;
@@ -111,22 +162,5 @@ public class FlightService {
 			}
 		}
 		return true;
-	}
-
-	public void deleteFlight(String flightNumber) throws NotFoundException {
-		Optional<Flight> res = flightRepository.getFlightByFlightNumber(flightNumber);
-		if (res.isPresent()) {
-			Flight flight = res.get();
-			List<Reservation> reservationList = reservationRepository.findAllByFlightsIn(
-					new ArrayList<Flight>() {{add(flight);}});
-			if (!reservationList.isEmpty()) {
-				throw new IllegalArgumentException("Flight " + flightNumber + " has active reservations");
-			} else {
-				flightRepository.delete(flight);
-				new ResponseEntity<>(HttpStatus.OK);
-			}
-		} else {
-			throw new NotFoundException("Sorry, the requested flight with number " + flightNumber + " does not exist");
-		}
 	}
 }
